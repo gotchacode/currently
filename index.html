@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>New Tab</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/application.css" rel="stylesheet">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+
+    <!--
+                  ;;                                                                                  
+                 ;;;;                                                                                 
+                ;;;;;;;                                                                               
+               ;;;;;;;;;                                                                              
+             ;;;;;;;;;;;;                                                                             
+            ;;;;;;;;;;;;;;;                                                                           
+          ;;;;;;;;;;;;;;;;;;;           ;||;;;;;||;            ;;;             ;|;;           ;|;  ;|;
+         ;;;;;;;;;;;;;;;;;;;;;          ;||      ||;  ;;;;;;        ;; ;;;;    ||    ;;;;;;   ;|;  ;|;
+        ;;;;;;;;;;;;;;;;;;;;;;;         ;||;;;;;;|;  ;|;  ;||; ;|;  ||;  ;|| ;;||;; ;|;  ;||  ;|;  ;|;
+       ;;;;;;;;;;;;;;;;;;;;;;;;;        ;||;;;;;||;   ;;;;;||; ;|;  ||    ;|;  ||    ;;;;;||  ;|;  ;|;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;       ;||      ||  ||;   ||; ;|;  ||    ;|;  ||   ||    ||  ;|;  ;|;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;       ;||      ;|; ;||;;;;|| ;|;  ||    ;|   ;|   ;||;;;;|; ;|;  ;|;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;                                                                     
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;                                                                     
+       ;;;;;;;;;;;;;;;;;;;;;;;;;                                                                      
+         ;;;;;;;;;;;;;;;;;;;;;                                                                        
+           ;;;;;;;;;;;;;;;;                                                                           
+                 ;;;;;;                                                                               
+                                                                                                                                            
+    -->
+</head>
+<body>
+<div id="update" class="hidden">
+  <p></p>
+  <i class="icon-ok"></i>
+</div>
+<div id="options" class="avgrund-popup">
+    <div id="list">
+      <ul>
+        <li class="active"><i class="icon-dashboard"></i>System</li>
+        <li><i class="icon-table"></i>Layout</li>
+        <li><i class="icon-magic"></i>Style</li>
+        <li><i class="icon-hand-right"></i>Credits</li>
+      </ul>
+    </div>
+  <div id="view">
+    <div class="settings show">
+      <h1>System</h1>
+      <form>
+        <section>
+          <h2>Temperature</h2>
+          <div>
+            <input name="unitType" type="radio" value="f" id="fahrenheit" checked/>
+            <label for="fahrenheit">Fahrenheit</label>
+          </div>
+          <div>
+            <input name="unitType" type="radio" value="c" id="celsius"/>
+            <label for="celsius">Celsius</label>
+          </div>
+        </section>
+        <section>
+          <h2>Hours</h2>
+          <div>
+            <input name="clock" type="radio" value="12" id="time12" checked/>
+            <label for="time12">12</label>
+          </div>
+          <div>
+            <input name="clock" type="radio" value="24" id="time24"/>
+            <label for="time24">24</label>
+          </div>
+        </section>
+        <section>
+          <h2>Choose Your Language</h2>
+          <div>
+              <select name="lang" id="lang">
+                <option value="AF">Afrikaans</option>
+                <option value="AL">Albanian</option>
+                <option value="AR">Arabic</option>
+                <option value="HY">Armenian</option>
+                <option value="AZ">Azerbaijani</option>
+                <option value="EU">Basque</option>
+                <option value="BY">Belarusian</option>
+                <option value="BU">Bulgarian</option>
+                <option value="LI">British English</option>
+                <option value="MY">Burmese</option>
+                <option value="CA">Catalan</option>
+                <option value="CN">Chinese - Simplified</option>
+                <option value="TW">Chinese - Traditional</option>
+                <option value="CR">Croatian</option>
+                <option value="CZ">Czech</option>
+                <option value="DK">Danish</option>
+                <option value="DV">Dhivehi</option>
+                <option value="NL">Dutch</option>
+                <option value="EN" selected="selected">English</option>
+                <option value="EO">Esperanto</option>
+                <option value="ET">Estonian</option>
+                <option value="FA">Farsi</option>
+                <option value="FI">Finnish</option>
+                <option value="FR">French</option>
+                <option value="FC">French Canadian</option>
+                <option value="GZ">Galician</option>
+                <option value="DL">German</option>
+                <option value="KA">Georgian</option>
+                <option value="GR">Greek</option>
+                <option value="GU">Gujarati</option>
+                <option value="HT">Haitian Creole</option>
+                <option value="IL">Hebrew</option>
+                <option value="HI">Hindi</option>
+                <option value="HU">Hungarian</option>
+                <option value="IS">Icelandic</option>
+                <option value="IO">Ido</option>
+                <option value="ID">Indonesian</option>
+                <option value="IR">Irish Gaelic</option>
+                <option value="IT">Italian</option>
+                <option value="JP">Japanese</option>
+                <option value="JW">Javanese</option>
+                <option value="KM">Khmer</option>
+                <option value="KR">Korean</option>
+                <option value="KU">Kurdish</option>
+                <option value="LA">Latin</option>
+                <option value="LV">Latvian</option>
+                <option value="LT">Lithuanian</option>
+                <option value="ND">Low German</option>
+                <option value="MK">Macedonian</option>
+                <option value="MT">Maltese</option>
+                <option value="GM">Mandinka</option>
+                <option value="MI">Maori</option>
+                <option value="MR">Marathi</option>
+                <option value="MN">Mongolian</option>
+                <option value="NO">Norwegian</option>
+                <option value="OC">Occitan</option>
+                <option value="PS">Pashto</option>
+                <option value="GN">Plautdietsch</option>
+                <option value="PL">Polish</option>
+                <option value="BR">Portuguese</option>
+                <option value="PA">Punjabi</option>
+                <option value="RO">Romanian</option>
+                <option value="RU">Russian</option>
+                <option value="SR">Serbian</option>
+                <option value="SK">Slovak</option>
+                <option value="SL">Slovenian</option>
+                <option value="SP">Spanish</option>
+                <option value="SI">Swahili</option>
+                <option value="SW">Swedish</option>
+                <option value="CH">Swiss</option>
+                <option value="TL">Tagalog</option>
+                <option value="TT">Tatarish</option>
+                <option value="TH">Thai</option>
+                <option value="TR">Turkish</option>
+                <option value="TK">Turkmen</option>
+                <option value="UA">Ukrainian</option>
+                <option value="UZ">Uzbek</option>
+                <option value="VU">Vietnamese</option>
+                <option value="CY">Welsh</option>
+                <option value="SN">Wolof</option>
+                <option value="JI">Yiddish - transliterated</option>
+                <option value="YI">Yiddish - unicode</option>
+              </select>
+            </div>
+          </section>
+        <section>
+          <h2>Location Address <i>(optional)</i></h2>
+          <div>
+            <input type="text" name="address" id="address" placeholder="Boulder, CO, 80305, USA" />
+          </div>
+        </section>
+        <button type="submit">SAVE</button>
+      </form>
+    </div>
+    <div class="settings">
+      <h1>Layout</h1>
+      <form>
+        <section>
+          <h2>Animation Toggle</h2>
+          <div>
+            <input type="radio" name="animation" id="animation-on" value="true" checked/>
+            <label for="animation-on">On</label>
+          </div>
+          <div>
+            <input type="radio" name="animation" id="animation-off" value="false"/>
+            <label for="animation-off">Off</label>
+          </div>
+        </section>
+        <section>
+          <h2>Seconds Toggle</h2>
+          <div>
+            <input name="seconds" type="radio" value="true" id="show-seconds" checked/>
+            <label for="show-seconds">On</label>
+          </div>
+          <div>
+            <input name="seconds" type="radio" value="false" id="hide-seconds"/>
+            <label for="hide-seconds">Off</label>
+          </div>
+        </section>
+        <button type="submit">SAVE</button>
+      </form>
+    </div>
+    <div class="settings">
+      <h1>Style</h1>
+      <form>
+      <section>
+          <h2>Text Color</h2>
+          <div>
+            <input name="textColor" type="radio" value="dark-text" id="dark-text"/>
+            <label for="dark">Dark</label>
+          </div>
+          <div>
+            <input name="textColor" type="radio" value="light-text" id="light-text" checked/>
+            <label for="light">Light</label>
+          </div>
+        </section>
+        <section>
+          <h2>Background Color</h2>
+          <div id="color-pick">
+            <ul>
+              <li class="dark-bg active"><i class="icon-ok"></i></li>
+              <li class="light-bg"><i class="icon-ok"></i></li>
+              <li class="mint-bg"><i class="icon-ok"></i></li>
+              <li class="blue-bg"><i class="icon-ok"></i></li>
+              <li class="red-bg"><i class="icon-ok"></i></li>
+              <li class="orange-bg"><i class="icon-ok"></i></li>
+              <li class="green-bg"><i class="icon-ok"></i></li>
+              <li class="purple-bg"><i class="icon-ok"></i></li>
+              <li class="aqua-bg"><i class="icon-ok"></i></li>
+            </ul>
+            <input type="hidden" name="color" value="">
+            <div id="preview" class="dark-bg light-text">
+              <i>1</i>
+            </div>
+        </div>
+        </section>
+        <button type="submit">SAVE</button>
+      </form>
+    </div>
+    <div class="settings">
+      <h1>Credits</h1>
+      <form>
+        <section>
+          <h2>Weather Icons</h2>
+          <div>
+            <a href="https://twitter.com/adamwhitcroft" target="_blank">Adam Whitcroft</a>
+          </div>
+        </section>
+        <section>
+          <h2>jQuery</h2>
+          <div>
+            <a href="http://jquery.com/" target="_blank">Homepage</a>
+          </div>
+        </section>
+        <section>
+          <h2>underscore.js</h2>
+          <div>
+            <a href="http://underscorejs.org/" target="_blank">Homepage</a>
+          </div>
+        </section>
+        <section>
+          <h2>Avgrund</h2>
+          <div>
+            <a href="https://twitter.com/hakimel" target="_blank">Hakim El Hattab</a>
+          </div>
+        </section>
+        <section>
+          <h2>Tipsy</h2>
+          <div>
+            <a href="https://github.com/jaz303/tipsy" target="_blank">Github</a>
+          </div>
+        </section>
+        <section>
+          <h2>Q.js</h2>
+          <div>
+            <a href="https://github.com/kriskowal/q" target="_blank">Github</a>
+          </div>
+        </section>
+        <section>
+          <h2>Geolib</h2>
+          <div>
+            <a href="https://github.com/manuelbieh/Geolib" target="_blank">Github</a>
+          </div>
+        </section>
+      </form>
+    </div>
+    <div class="promo">
+      <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ERRMQGDQL9SZA" target="_blank" id="gift">
+        <i class="icon-gift"></i>
+        <p>Think we've done a good job?</p>
+        <p><b>Buy us a beer!</b></p>
+      </a>
+      <a href="https://twitter.com/share?text=Loving+the+new+updates+to+currently+http%3A%2F%2Fbit.ly%2FPMawVf+%23currently+%23chrome+by+%40vitaly_babiy+and+%40henrymodis" target="_blank" id="share"><i class="icon-twitter"></i>Share Currently</a>
+      <a href="https://twitter.com/vitaly_babiy" target="_blank" class="who vitaly"><b>Hacker:</b> @Vitaly</a>
+      <a href="https://twitter.com/henrymodis" target="_blank" class="who henry"><b>Designer:</b> @Henry</a>
+      <a class="normal" href="http://rainfalldesign.tumblr.com/">Updates</a>
+      <a class="normal" href="http://chromecurrently.uservoice.com" target="_blank" id="support">Support</a>
+    </div>
+  </div>
+  <a href="#" id="close"><i class="icon-remove"></i></a>
+</div>
+<div id="main" class="">
+<div class="avgrund-cover"></div>
+<div class="avgrund-contents">
+<div class="bottom-icons">
+  <a class="options tipsy" title="Options" href="#">
+    <i class="icon-cog"></i>
+  </a>
+  <a class="home tipsy" title="Default" href='#'>
+    <i class="icon-th"></i>
+  </a>
+  <a class="wunder tipsy" title="Wunderground" href="http://www.wunderground.com/?apiref=846edca2fe64735c">
+    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+       width="69px" height="32px" viewBox="0 0 69 32" enable-background="new 0 0 69 32" xml:space="preserve">
+    <path fill="#FFFFFF" d="M32.463,28.327l-3.38-4.304c-0.085-0.106-0.242-0.124-0.354-0.035l-0.583,0.459
+      c-0.111,0.087-0.131,0.242-0.046,0.354l3.38,4.299c0.085,0.108,0.242,0.127,0.354,0.039l0.584-0.46
+      C32.527,28.594,32.549,28.434,32.463,28.327z"/>
+    <path fill="#FFFFFF" d="M35.189,24.023c-0.085-0.106-0.243-0.124-0.354-0.035l-0.583,0.459c-0.111,0.087-0.133,0.242-0.047,0.354
+      l3.38,4.299c0.086,0.108,0.242,0.127,0.355,0.039l0.583-0.46c0.11-0.085,0.132-0.245,0.048-0.352L35.189,24.023z"/>
+    <path fill="#FFFFFF" d="M41.493,23.988l-0.582,0.459c-0.112,0.087-0.135,0.242-0.048,0.354l3.381,4.299
+      c0.084,0.108,0.243,0.127,0.354,0.039l0.585-0.46c0.107-0.085,0.128-0.245,0.044-0.352l-3.38-4.304
+      C41.764,23.917,41.605,23.899,41.493,23.988z"/>
+    <path fill="#FFFFFF" d="M25.002,22.513c-1.568,2.811-2.464,6.039-2.464,9.471h1.264c0-3.462,0.973-6.698,2.662-9.471H25.002z"/>
+    <path fill="#FFFFFF" d="M42.555,13.522c10.331,0,18.737,8.292,18.737,18.487h1.264c0-10.892-8.976-19.752-20.001-19.752
+      c-1.459,0-2.878,0.159-4.247,0.451c0.645,0.333,1.568,0.65,2.892,0.867C41.648,13.543,42.101,13.522,42.555,13.522z"/>
+    <path fill="#FFFFFF" d="M23.921,22.511l-5.691-0.006c-1.185,2.938-1.836,6.138-1.836,9.492h5.167
+      C21.565,28.574,22.42,25.35,23.921,22.511z"/>
+    <path fill="#FFFFFF" d="M42.555,6.251c-3.307,0-6.466,0.605-9.378,1.707l4.139,4.056c1.675-0.423,3.432-0.649,5.239-0.649
+      c11.561,0,20.936,9.267,20.992,20.632h5.17C68.717,17.779,57.001,6.251,42.555,6.251z"/>
+    <path fill="#FFFFFF" d="M50.298,20.815c0-0.805-0.157-0.996-2.284-1.848c-2.063-0.826-2.429-1.405-2.895-2.357
+      c-0.067-0.135-0.139-0.277-0.22-0.43c-0.567-1.049-1.146-1.646-2.595-1.791c-1.247-0.125-2.237-0.333-3.024-0.58l0,0
+      c-0.299-0.096-0.57-0.195-0.815-0.299c-0.019-0.008-0.038-0.016-0.058-0.025c-0.064-0.029-0.13-0.058-0.19-0.087
+      c-0.025-0.01-0.047-0.021-0.072-0.033c-0.057-0.029-0.115-0.058-0.168-0.085c-0.023-0.012-0.043-0.022-0.065-0.035
+      c-0.056-0.029-0.109-0.059-0.161-0.087c-0.008-0.005-0.016-0.01-0.023-0.016c-0.122-0.07-0.233-0.141-0.334-0.209
+      c-0.209-0.146-0.38-0.288-0.52-0.423l-0.347-0.34L32.5,8.224l0,0l-7.233-7.089c-0.693-0.681-2.004-1.208-2.878-1.126
+      c-0.842,0.075-1.974,0.839-2.482,1.67c-0.111,0.244-1.145,2.487-2.325,4.028c-1.264,1.652-6.151,3.143-6.358,3.206
+      c-0.897,0.337-1.948,1.402-2.284,2.325c-0.064,0.259-0.721,2.823-1.892,4.395c-1.405,1.888-3.668,3.359-4.958,3.638
+      c-1.041,0.228-1.749,0.805-1.804,1.47c-0.022,0.271,0.109,0.475,0.223,0.601c0.279,0.304,0.762,0.485,1.292,0.486L25.9,21.85
+      l0.99,0.001l0,0l21.7,0.021C49.104,21.871,50.298,21.768,50.298,20.815z"/>
+    </svg>
+  </a>
+</div>
+<div id ="content" class="container">
+<svg id="clock" viewBox="0 0 100 100" width="200" height="200">
+
+    <circle id="face" cx="50" cy="50" r="45"/> <!-- the clock face -->
+
+    <g id="ticks">
+      <!-- 12 hour tick marks -->
+      <line x1='50' y1='5.000' x2='50.00' y2='10.00'/>
+      <line x1='72.50' y1='11.03' x2='70.00' y2='15.36'/>
+      <line x1='88.97' y1='27.50' x2='84.64' y2='30.00'/>
+      <line x1='95.00' y1='50.00' x2='90.00' y2='50.00'/>
+      <line x1='88.97' y1='72.50' x2='84.64' y2='70.00'/>
+      <line x1='72.50' y1='88.97' x2='70.00' y2='84.64'/>
+      <line x1='50.00' y1='95.00' x2='50.00' y2='90.00'/>
+      <line x1='27.50' y1='88.97' x2='30.00' y2='84.64'/>
+      <line x1='11.03' y1='72.50' x2='15.36' y2='70.00'/>
+      <line x1='5.000' y1='50.00' x2='10.00' y2='50.00'/>
+      <line x1='11.03' y1='27.50' x2='15.36' y2='30.00'/>
+      <line x1='27.50' y1='11.03' x2='30.00' y2='15.36'/>
+    </g>
+
+    <g id="numbers">
+      <!-- Number the cardinal directions-->
+      <text x="50" y="18">12</text><text x="85" y="53">3</text>
+      <text x="50" y="88">6</text><text x="15" y="53">9</text>
+    </g>
+
+    <!-- Draw hands pointing straight up. We rotate them in the code. -->
+    <g id="hands"> <!-- Add shadows to the hands -->
+      <line id="hourhand" x1="50" y1="50" x2="50" y2="24"/>
+      <line id="minutehand" x1="50" y1="50" x2="50" y2="20"/>
+      <line id="secondhand" x1="50" y1="50" x2="50" y2="16"/>
+    </g>
+  </svg>
+  <div id="time" class="fadeInDown animated smooth"></div>
+  <p id="date" class="title"></p>
+  <div id="weather">
+    <div id="loader" class="status fadeInDown animated hidden">Y</div>
+    <div id="error">
+    </div>
+    <div id="weather-inner" class="hidden clearfix">
+      <div class="now animated bounceIn smooth">
+        <span class='weather'></span>
+        <b class="temp"></b>
+        <p>Now</p>
+      </div>
+      <ul class='clearfix'>
+        <li>
+          <span class='weather smooth'></span>
+          <div class="temp">
+            <div class="w-left">
+              <p class="high"></p>
+            </div>
+            <div class="w-mid"></div>
+            <div class="w-right">
+              <p class="low"></p>
+            </div>
+          </div>
+          <p class="day smooth"></p>
+        </li>
+        <li>
+          <span class='weather smooth'></span>
+          <div class="temp">
+            <div class="w-left">
+              <p class="high"></p>
+            </div>
+            <div class="w-mid"></div>
+            <div class="w-right">
+              <p class="low"></p>
+            </div>
+          </div>
+          <p class="day smooth"></p>
+        </li>
+        <li>
+          <span class='weather smooth'></span>
+          <div class="temp">
+            <div class="w-left">
+              <p class="high"></p>
+            </div>
+            <div class="w-mid"></div>
+            <div class="w-right">
+              <p class="low"></p>
+            </div>
+          </div>
+          <p class="day smooth"></p>
+        </li>
+        <li>
+          <span class='weather smooth'></span>
+          <div class="temp">
+            <div class="w-left">
+              <p class="high"></p>
+            </div>
+            <div class="w-mid"></div>
+            <div class="w-right">
+              <p class="low"></p>
+            </div>
+          </div>
+          <p class="day smooth"></p>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="city" class="title"></div>
+</div>
+</div>
+</div>
+</body>
+
+<script type='text/template' id='locationError'>
+  <p>Sorry! We cant find you. Tell us where you are:</p>
+  <form id="set-location">
+    <input type="text" placeholder="Boulder, Colorado, 80305, USA" />
+    <button>SAVE</button>
+  </form>
+</script>
+
+<script type="text/template" id="offlineError">
+  <i class="icon-warning-sign"></i><span>Offline</span>
+</script>
+
+<script type="text/javascript" src="js/underscore-min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/libs.js"></script>
+<script type="text/javascript" src="js/q.min.js"></script>
+<script type="text/javascript" src="js/geolib.min.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+</html>
