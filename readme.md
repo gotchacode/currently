@@ -1,9 +1,18 @@
-#About
+#Currently Chrome Extension
 
-Source code of the awesome Currently chrome extension.
+Currently is a really awesome chrome extension that gives you location specfic metrics about weather.
 
-##Important
+**Prerequisites:** All you need to use it is Chrome/Chromium. 
 
-- I am not involved in the currently team.
-- I saw the their code and found it awesome and educative at the same time. 
-- I have no intention in violating anything, but would love to contribute to make it better.
+**Mac OS X:** Open `chrome://extensions/` in your browser and load unpacked extensions and select the directory of the extension.
+
+**Linux:** Same as Mac.
+
+**Windows:** Same as Mac
+
+**Note:** I am not involved with the currently development team. Checked their code, found it awesome and so Open Sourced it for the benefit of community. It has no intention in taking credit of their work or any other gains. It is purely for educational purpose only
+
+
+##Contributions
+
+If you want to contribute, just fork the repository and send a Pull Request.
