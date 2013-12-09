@@ -1,0 +1,133 @@
+#weather #error i {
+    font-size: 2em;
+}
+#weather #error span {
+    font-size: .8em;
+    margin-left: 0;
+    font-family: 'Helvetica Neue', 'Open-Reg', sans-serif;
+}
+.status {
+    line-height: 1;
+    padding: 0;
+    font-size: 9.6em;
+    display: block;
+    position: absolute;
+    left: 50%;
+    width: 70px;
+    height: 82px;
+    vertical-align: text-bottom;
+    margin: 0 0 0 -24px;
+}
+#weather {
+    position: relative;
+    zoom: 1;
+    padding: 0 30px;
+    width: 780px;
+}
+#weather:before, #weather:after {
+    content: "";
+    display: table;
+}
+#weather:after {
+    clear: both;
+}
+#weather span {
+    display: block;
+    font-family: 'Weather'}
+#weather .now {
+    float: left;
+    width: 150px;
+    text-align: center;
+    margin-top: -15px;
+}
+#weather .now span {
+    font-size: 11.5em;
+    height: 170px;
+    margin: 0 0 7px 10px;
+}
+#weather .now b {
+    font-size: 3em;
+    font-weight: bold;
+    font-family: 'Helvetica Neue', 'Open-Bold', sans-serif;
+}
+#weather .now p {
+    font-size: 1.8em;
+    margin-top: 10px;
+    letter-spacing: 2px;
+}
+#weather ul {
+    margin-top: 75px;
+    float: right;
+}
+#weather li {
+    -webkit-transform: rotate3d(0, 0, 0, 0);
+    margin-left: 20px;
+    float: left;
+    width: 135px;
+    text-align: center;
+}
+#weather li .weather {
+    margin: 0 auto;
+    display: block;
+    width: 60px;
+    font-size: 5em;
+}
+#weather li .temp {
+    zoom: 1;
+    width: 90px;
+    margin: 0 auto;
+}
+#weather li .temp:before, #weather li .temp:after {
+    content: "";
+    display: table;
+}
+#weather li .temp:after {
+    clear: both;
+}
+#weather li .temp .w-left, #weather li .temp .w-right {
+    float: left;
+    width: 40px;
+}
+#weather li .temp .w-mid {
+    float: left;
+    width: 10px;
+    height: 20px;
+}
+#weather li .temp p {
+    display: block;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+#weather li .temp .low {
+    opacity: .4;
+    text-align: left;
+    -webkit-text-stroke: 0;
+}
+#weather li .temp .high {
+    text-align: right;
+}
+#weather li .day {
+    font-size: 1.1em;
+    margin-top: 10px;
+    letter-spacing: 2px;
+}
+.home, .main-return, .wunder {
+    cursor: pointer;
+    position: fixed;
+    bottom: 10px;
+    color: #555;
+    text-decoration: none;
+    font-size: 1.8em;
+    -webkit-transition: all 200ms ease-in-out;
+    z-index: 999999;
+}
+.wunder path {
+    -webkit-transition: all 200ms ease-in-out;
+}
+
+.wunder {
+    right: 90px;
+}
+.wunder path {
+    fill: #555;
+}

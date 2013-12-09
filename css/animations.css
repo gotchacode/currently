@@ -1,0 +1,328 @@
+.animated {
+    -webkit-animation-fill-mode: both;
+    -moz-animation-fill-mode: both;
+    -ms-animation-fill-mode: both;
+    -o-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-duration: 1s;
+    -moz-animation-duration: 1s;
+    -ms-animation-duration: 1s;
+    -o-animation-duration: 1s;
+    animation-duration: 1s;
+}
+.animated.hinge {
+    -webkit-animation-duration: 2s;
+    -moz-animation-duration: 2s;
+    -ms-animation-duration: 2s;
+    -o-animation-duration: 2s;
+    animation-duration: 2s;
+}
+@-webkit-keyframes fadeIn {
+    0% {
+    opacity: 0;
+}
+100% {
+    opacity: 1;
+}
+}@-moz-keyframes fadeIn {
+    0% {
+    opacity: 0;
+}
+100% {
+    opacity: 1;
+}
+}@-ms-keyframes fadeIn {
+    0% {
+    opacity: 0;
+}
+100% {
+    opacity: 1;
+}
+}@-o-keyframes fadeIn {
+    0% {
+    opacity: 0;
+}
+100% {
+    opacity: 1;
+}
+}@keyframes fadeIn {
+    0% {
+    opacity: 0;
+}
+100% {
+    opacity: 1;
+}
+}.fadeIn {
+    -webkit-animation-name: fadeIn;
+    -moz-animation-name: fadeIn;
+    -ms-animation-name: fadeIn;
+    -o-animation-name: fadeIn;
+    animation-name: fadeIn;
+}
+@-webkit-keyframes fadeInUp {
+    0% {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+}
+100% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+}
+}@-moz-keyframes fadeInUp {
+    0% {
+    opacity: 0;
+    -moz-transform: translateY(20px);
+}
+100% {
+    opacity: 1;
+    -moz-transform: translateY(0);
+}
+}@-ms-keyframes fadeInUp {
+    0% {
+    opacity: 0;
+    -ms-transform: translateY(20px);
+}
+100% {
+    opacity: 1;
+    -ms-transform: translateY(0);
+}
+}@-o-keyframes fadeInUp {
+    0% {
+    opacity: 0;
+    -o-transform: translateY(20px);
+}
+100% {
+    opacity: 1;
+    -o-transform: translateY(0);
+}
+}@keyframes fadeInUp {
+    0% {
+    opacity: 0;
+    transform: translateY(20px);
+}
+100% {
+    opacity: 1;
+    transform: translateY(0);
+}
+}.fadeInUp {
+    -webkit-animation-name: fadeInUp;
+    -moz-animation-name: fadeInUp;
+    -ms-animation-name: fadeInUp;
+    -o-animation-name: fadeInUp;
+    animation-name: fadeInUp;
+}
+@-webkit-keyframes fadeInLeft {
+    0% {
+    -webkit-transform: translateX(40px);
+}
+100% {
+    -webkit-transform: translateY(0);
+}
+}li.animated.fadeInLeft {
+    -webkit-animation-name: fadeInLeft;
+    -webkit-animation-duration: 450ms;
+}
+@-webkit-keyframes fadeInDown {
+    0% {
+    opacity: 0;
+    -webkit-transform: translateY(-20px);
+}
+100% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+}
+}@-moz-keyframes fadeInDown {
+    0% {
+    opacity: 0;
+    -moz-transform: translateY(-20px);
+}
+100% {
+    opacity: 1;
+    -moz-transform: translateY(0);
+}
+}@-ms-keyframes fadeInDown {
+    0% {
+    opacity: 0;
+    -ms-transform: translateY(-20px);
+}
+100% {
+    opacity: 1;
+    -ms-transform: translateY(0);
+}
+}@-o-keyframes fadeInDown {
+    0% {
+    opacity: 0;
+    -ms-transform: translateY(-20px);
+}
+100% {
+    opacity: 1;
+    -ms-transform: translateY(0);
+}
+}@keyframes fadeInDown {
+    0% {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+100% {
+    opacity: 1;
+    transform: translateY(0);
+}
+}.fadeInDown {
+    -webkit-animation-name: fadeInDown;
+    -moz-animation-name: fadeInDown;
+    -ms-animation-name: fadeInDown;
+    -o-animation-name: fadeInDown;
+    animation-name: fadeInDown;
+}
+@-webkit-keyframes bounceIn {
+    0% {
+    opacity: 0;
+    -webkit-transform: scale(0.3);
+}
+50% {
+    opacity: 1;
+    -webkit-transform: scale(1.05);
+}
+70% {
+    -webkit-transform: scale(0.9);
+}
+100% {
+    -webkit-transform: scale(1);
+}
+}@-moz-keyframes bounceIn {
+    0% {
+    opacity: 0;
+    -moz-transform: scale(0.3);
+}
+50% {
+    opacity: 1;
+    -moz-transform: scale(1.05);
+}
+70% {
+    -moz-transform: scale(0.9);
+}
+100% {
+    -moz-transform: scale(1);
+}
+}@-ms-keyframes bounceIn {
+    0% {
+    opacity: 0;
+    -ms-transform: scale(0.3);
+}
+50% {
+    opacity: 1;
+    -ms-transform: scale(1.05);
+}
+70% {
+    -ms-transform: scale(0.9);
+}
+100% {
+    -ms-transform: scale(1);
+}
+}@-o-keyframes bounceIn {
+    0% {
+    opacity: 0;
+    -o-transform: scale(0.3);
+}
+50% {
+    opacity: 1;
+    -o-transform: scale(1.05);
+}
+70% {
+    -o-transform: scale(0.9);
+}
+100% {
+    -o-transform: scale(1);
+}
+}@keyframes bounceIn {
+    0% {
+    opacity: 0;
+    transform: scale(0.3);
+}
+50% {
+    opacity: 1;
+    transform: scale(1.05);
+}
+70% {
+    transform: scale(0.9);
+}
+100% {
+    transform: scale(1);
+}
+}.bounceIn {
+    -webkit-animation-name: bounceIn;
+    -moz-animation-name: bounceIn;
+    -ms-animation-name: bounceIn;
+    -o-animation-name: bounceIn;
+    animation-name: bounceIn;
+}
+.avgrund-active #main {
+    -webkit-transform: scale(0.95);
+}
+.avgrund-cover {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+.avgrund-active .avgrund-cover {
+    visibility: visible;
+    opacity: 1;
+}
+.avgrund-contents {
+    position: relative;
+    height: 100%;
+    margin: auto;
+}
+.avgrund-active .avgrund-contents {
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -ms-filter: blur(2px);
+    -o-filter: blur(2px);
+    filter: blur(2px);
+}
+.no-blur.avgrund-active .avgrund-contents {
+    -webkit-filter: none;
+    -moz-filter: none;
+    -ms-filter: none;
+    -o-filter: none;
+    filter: none;
+}
+.avgrund-popup {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    z-index: 2000;
+    -webkit-transform: scale(0.8);
+    transform: scale(0.8);
+}
+.avgrund-active .avgrund-popup-animate {
+    visibility: visible;
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1.1);
+}
+.avgrund-popup.stack {
+    -webkit-transform: scale(1.5);
+    transform: scale(1.5);
+}
+.avgrund-active .avgrund-popup.stack {
+    -moz-transform: scale(1.1);
+    transform: scale(1.1);
+}
+.avgrund-ready #main, .avgrund-ready .avgrund-contents, .avgrund-ready .avgrund-popup, .avgrund-ready .avgrund-cover {
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-transition-duration: .3s;
+    -webkit-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    -webkit-transition-property: -webkit-transform, background-color;
+}
+.avgrund-ready .avgrund-popup.no-transition {
+    -webkit-transition: none;
+    transition: none;
+}

@@ -1,0 +1,298 @@
+#options {
+    width: 752px;
+    height: 502px;
+    left: 50%;
+    top: 50%;
+    margin: -270px 0 0 -390px;
+    font-family: 'Helvetica Neue', 'Open-Reg', sans-serif;
+    color: #333;
+}
+#options #list {
+    position: relative;
+    float: left;
+    width: 80px;
+    height: 300px;
+}
+#options #list li {
+    background: #fff;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    opacity: .8;
+    text-align: center;
+    font-weight: bold;
+    font-size: .9em;
+    cursor: pointer;
+    -webkit-transform: rotate3d(0, 0, 0, 0);
+}
+#options #list li i {
+    font-size: 2.5em;
+}
+#options #list li.active {
+    position: relative;
+    z-index: 602;
+    opacity: 1;
+    border-right: 1px solid #fff;
+}
+#options #list li.active i {
+    color: #1b94b7;
+}
+#options #list li.active:hover {
+    opacity: 1;
+}
+#options #list li:hover {
+    opacity: .9;
+}
+#options #list li:first-child {
+    border-radius: 3px 0 0 0;
+}
+#options #list li:last-child {
+    border-radius: 0 0 0 3px;
+}
+#options #view {
+    position: relative;
+    z-index: 601;
+    float: right;
+    background: #fff;
+    width: 672px;
+    height: 500px;
+    border-radius: 0 3px 3px 3px;
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.3);
+}
+#options #view .promo {
+    float: right;
+    background: #f1f1f1;
+    width: 150px;
+    padding: 20px;
+    height: 456px;
+    border-radius: 0 3px 3px 0;
+}
+#options #view .promo a {
+    -webkit-transition: all 100ms ease-in-out;
+    display: block;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    background: #e1e1e1;
+    text-align: center;
+    color: #666;
+    padding: 10px;
+}
+#options #view .promo #gift {
+    border: 1px solid #e1e1e1;
+}
+#options #view .promo #gift i {
+    font-size: 6em;
+    height: 95px;
+}
+#options #view .promo #gift p {
+    font-size: .80em;
+    font-weight: 200;
+    margin-top: 5px;
+}
+#options #view .promo #gift:hover {
+    background: #fff;
+    border: 1px #ccc dashed;
+}
+#options #view .promo #gift:hover i {
+    color: #c44949;
+}
+#options #view .promo #share {
+    padding: 8px 10px 10px 10px;
+    font-weight: bold;
+    font-size: .8em;
+}
+#options #view .promo #share i {
+    font-size: 1.4em;
+    opacity: .5;
+    margin-right: 5px;
+}
+#options #view .promo #share:hover {
+    background: #4caeec;
+    color: #fff;
+}
+#options #view .promo .who {
+    font-size: .85em;
+}
+#options #view .promo .who:hover {
+    color: #fff;
+}
+#options #view .promo .vitaly:hover {
+    background: #d37e23;
+}
+#options #view .promo .henry:hover {
+    background: #25b18b;
+}
+#options #view .promo .normal {
+    font-size: .8em;
+    background: #ddd;
+}
+#options #view .promo .normal:hover {
+    background: #fff;
+    color: #666;
+}
+#options #view .settings {
+    padding: 20px 0 20px 30px;
+    float: left;
+    color: #333;
+    display: none;
+}
+#options #view .settings h1 {
+    font-size: 1.6em;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+#options #view .settings form section {
+    zoom: 1;
+    margin-top: 20px;
+}
+#options #view .settings form section:before, #options #view .settings form section:after {
+    content: "";
+    display: table;
+}
+#options #view .settings form section:after {
+    clear: both;
+}
+#options #view .settings form section h2 {
+    font-weight: bold;
+    color: #777;
+}
+#options #view .settings form section>div {
+    zoom: 1;
+    margin: 5px 10px 0 0;
+    float: left;
+}
+#options #view .settings form section>div:before, #options #view .settings form section>div:after {
+    content: "";
+    display: table;
+}
+#options #view .settings form section>div:after {
+    clear: both;
+}
+#options #view .settings form section>div a {
+    font-size: .9em;
+    font-weight: bold;
+    color: #1b94b7;
+}
+#options #view .settings form section>div a:hover {
+    opacity: .7;
+}
+#options #view .settings form section label, #options #view .settings form section input {
+    float: left;
+}
+#options #view .settings form section input {
+    clear: left;
+    margin-top: 5px;
+}
+#options #view .settings form section input[type=text] {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    outline: 0;
+    padding: 5px;
+    font-size: 1em;
+    width: 300px;
+    -webkit-transition: all 200ms ease-in-out;
+}
+#options #view .settings form section input[type=text]:focus {
+    border: 1px solid #1b94b7;
+}
+#options #view .settings form section label {
+    color: #555;
+    margin: 2px 0 0 5px;
+}
+#options #view .settings form button {
+    background: #444;
+    border: 0;
+    outline: 0;
+    color: #fff;
+    font-weight: bold;
+    display: inline-block;
+    font-size: .8em;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+    cursor: pointer;
+    -webkit-transition: all 200ms ease-in-out;
+}
+#options #view .settings form button:hover {
+    background: #555;
+}
+#options #view .settings form button.saved {
+    background-color: #85c257;
+    color: #fff;
+}
+#options #view #color-pick {
+    zoom: 1;
+}
+#options #view #color-pick:before, #options #view #color-pick:after {
+    content: "";
+    display: table;
+}
+#options #view #color-pick:after {
+    clear: both;
+}
+#options #view #color-pick ul {
+    float: left;
+    display: block;
+    width: 180px;
+    height: 180px;
+    margin-top: 5px;
+}
+#options #view #color-pick ul li {
+    float: left;
+    width: 60px;
+    height: 60px;
+    color: #fff;
+    text-align: center;
+}
+#options #view #color-pick ul li i {
+    visibility: hidden;
+    margin-top: 13px;
+    font-size: 2em;
+}
+#options #view #color-pick ul li.active i {
+    visibility: visible;
+}
+#options #view #color-pick ul li:hover {
+    cursor: pointer;
+}
+#options #view #color-pick #preview {
+    margin: 5px 0 0 20px;
+    float: right;
+    height: 180px;
+    width: 180px;
+    border-radius: 3px;
+    font-family: 'Weather';
+    text-align: center;
+}
+#options #view #color-pick #preview i {
+    display: block;
+    padding: 30px 0 0 24px;
+    font-size: 8em;
+}
+#options #close {
+    padding-top: 7px;
+    text-align: center;
+    width: 40px;
+    height: 32px;
+    position: absolute;
+    right: 0;
+    margin-right: -50px;
+    background: white;
+    border-radius: 50%;
+    font-size: 1.6em;
+    color: #555;
+}
+#options #close:hover {
+    color: #c44949;
+}
+
+.options {
+    cursor: pointer;
+    position: fixed;
+    bottom: 10px;
+    color: #555;
+    text-decoration: none;
+    font-size: 1.8em;
+    -webkit-transition: all 200ms ease-in-out;
+    z-index: 999999;
+}
