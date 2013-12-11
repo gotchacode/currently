@@ -888,6 +888,10 @@ function style() {
       $('#main').addClass('no-seconds');
     }
 
+    // Remove weather
+    if (!options.weather) {
+      $('#main #weather').addClass('hidden');
+    }
   });
 }
 
