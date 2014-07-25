@@ -11,7 +11,7 @@
     background: #444;
 }
 .dark-bg.light-text .home, .dark-bg.light-text .main-return, .dark-bg.light-text .options, .dark-bg.light-text .title {
-    color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
 }
 .dark-bg.light-text .wunder path {
     fill: rgba(255, 255, 255, 0.3);
