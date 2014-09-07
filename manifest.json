@@ -15,5 +15,5 @@
    "options_page": "index.html#options",
    "permissions": [ "storage", "geolocation", "unlimitedStorage", "https://maps.googleapis.com/maps/api/", "http://api.wunderground.com/api", "https://ssl.google-analytics.com/", "https://s3.amazonaws.com/" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "2.7.0"
+   "version": "2.7.1"
 }
