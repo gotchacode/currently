@@ -3,6 +3,9 @@ var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-33402958-1']);
 _gaq.push(['_trackPageview']);
 
+Raven.config('https://b37dffa6de1b4e908c01f26629f20e65@app.getsentry.com/4859');
+window.onerror = Raven.process;
+
 function OSType() {
   var OSName="Unknown OS";
   if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
@@ -809,14 +812,28 @@ var Clock = {
     return num;
   },
 
+  dateTemplate: function(parts){
+    return parts.day + ", " + parts.month + " " + parts.date;
+  },
+
+  transformTemplate: function(angle){
+    return "rotate(" + angle + ",50,50)";
+  },
+
   refresh: function(options) {
     var parts = Clock.timeParts(options);
-    Clock.$el.digital.date.html(parts.day + ', ' + parts.month + ' ' + parts.date);
-    Clock.$el.digital.time.html("<span class='hour'>"+parts.hour+"</span>"+"<span class='minute'>"+parts.minute+"</span>"+"<span class='second'>"+parts.second+"</span");
+    var oldParts = Clock._parts || {};
 
-    Clock.$el.analog.second.attr("transform", "rotate(" + parts.secondAngle + ",50,50)");
-    Clock.$el.analog.minute.attr("transform", "rotate(" + parts.minuteAngle + ",50,50)");
-    Clock.$el.analog.hour.attr("transform", "rotate(" + parts.hourAngle + ",50,50)");
+    Clock.$el.digital.date.html(Clock.dateTemplate(parts));
+
+    _.each(['hour', 'minute', 'second'], function(unit){
+      if( parts[unit] !== oldParts[unit] ){
+        Clock.$el.digital.time.find('.' + unit).text(parts[unit]);
+        Clock.$el.analog[unit].attr("transform", Clock.transformTemplate(parts[unit + 'Angle']));
+      }
+    });
+
+    Clock._parts = parts;
   },
 
   start: function(options) {
@@ -824,10 +841,17 @@ var Clock = {
       clearInterval(Clock._running);
     }
 
-    Clock._running = setInterval(function() {
+    function tick() {
+      var delayTime = 500;
+
       Clock.refresh(options);
-    }, 1000);
-    Clock.refresh(options);
+
+      Clock._running = setTimeout(function(){
+        window.requestAnimationFrame( tick );
+      }, delayTime);
+    }
+
+    tick();
   }
 };
 
@@ -864,10 +888,6 @@ function style() {
       $('#main').addClass('no-seconds');
     }
 
-    // Remove weather
-    if (!options.weather) {
-      $('#main #weather').addClass('hidden');
-    }
   });
 }
 

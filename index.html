@@ -3,15 +3,7 @@
 <head>
     <title>New Tab</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
     <link href="css/application.css" rel="stylesheet">
-    <link href="css/animations.css" rel="stylesheet">
-    <link href="css/tipsy.css" rel="stylesheet">
-    <link href="css/icons.css" rel="stylesheet">
-    <link href="css/backgrounds.css" rel="stylesheet">
-    <link href="css/weather.css" rel="stylesheet">
-    <link href="css/options.css" rel="stylesheet">
-
     <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
 
     <!--
@@ -199,17 +191,6 @@
             <label for="hide-seconds">Off</label>
           </div>
         </section>
-        <section>
-          <h2>Weather Toggle</h2>
-          <div>
-            <input type="radio" name="weather" id="weather-on" value="true" checked/>
-            <label for="weather-on">On</label>
-          </div>
-          <div>
-            <input type="radio" name="weather" id="weather-off" value="false"/>
-            <label for="weather-off">Off</label>
-          </div>
-        </section>
         <button type="submit">SAVE</button>
       </form>
     </div>
@@ -387,7 +368,7 @@
       <line id="secondhand" x1="50" y1="50" x2="50" y2="16"/>
     </g>
   </svg>
-  <div id="time" class="fadeInDown animated smooth"></div>
+  <div id="time" class="fadeInDown animated smooth"><span class="hour"></span><span class="minute"></span><span class="second"></span></div>
   <p id="date" class="title"></p>
   <div id="weather">
     <div id="loader" class="status fadeInDown animated hidden">Y</div>
@@ -478,5 +459,6 @@
 <script type="text/javascript" src="js/libs.js"></script>
 <script type="text/javascript" src="js/q.min.js"></script>
 <script type="text/javascript" src="js/geolib.min.js"></script>
+<script type="text/javascript" src="js/raven.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
 </html>
