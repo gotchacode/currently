@@ -1,0 +1,31 @@
+{
+  "name": "currently",
+  "version": "1.0.0",
+  "description": "current chrome extension",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vinitkumar/currently.git"
+  },
+  "keywords": [
+    "currently",
+    "weather"
+  ],
+  "author": "vinitkumar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vinitkumar/currently/issues"
+  },
+  "homepage": "https://github.com/vinitkumar/currently#readme",
+  "dependencies": {
+    "@types/chrome": "0.0.46",
+    "@types/geolib": "^2.0.2",
+    "@types/jquery": "^2.0.41",
+    "@types/q": "^1.0.0",
+    "@types/raven": "^1.2.1",
+    "@types/underscore": "^1.8.0"
+  }
+}

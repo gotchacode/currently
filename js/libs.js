@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2012 Hakim El Hattab, http://hakim.se
  */
-var Avgrund = (function(){
+const Avgrund = (function(){
 
     var container = document.documentElement,
         popup = document.querySelector( '.avgrund-popup-animate' ),
@@ -347,3 +347,5 @@ var Avgrund = (function(){
   };
     
 })(jQuery);
+
+module.exports = Avgrund;
