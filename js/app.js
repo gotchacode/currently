@@ -1,31 +1,24 @@
-"use strict";
-exports.__esModule = true;
-var raven_1 = require("raven");
-// Setup google analytics
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-33402958-1']);
-_gaq.push(['_trackPageview']);
-raven_1["default"].config('https://b37dffa6de1b4e908c01f26629f20e65@app.getsentry.com/4859');
-window.onerror = raven_1["default"].process;
 function OSType() {
     var OSName = "Unknown OS";
-    if (navigator.appVersion.indexOf("Win") != -1)
+    if (navigator.appVersion.indexOf("Win") !== -1) {
         OSName = "Windows";
-    if (navigator.appVersion.indexOf("Mac") != -1)
+    }
+    if (navigator.appVersion.indexOf("Mac") !== -1) {
         OSName = "MacOS";
-    if (navigator.appVersion.indexOf("X11") != -1)
+    }
+    if (navigator.appVersion.indexOf("X11") !== -1) {
         OSName = "UNIX";
-    if (navigator.appVersion.indexOf("Linux") != -1)
+    }
+    if (navigator.appVersion.indexOf("Linux") !== -1) {
         OSName = "Linux";
+    }
     return OSName;
 }
 function inBeta() {
     if (chrome.runtime.getManifest().name.indexOf("Beta") !== -1) {
         return true;
     }
-    else {
-        return false;
-    }
+    return false;
 }
 var Loader = {
     loader: $('#loader'),
@@ -39,9 +32,9 @@ var Loader = {
 };
 var ErrorHandler = {
     $el: {
+        city: $("#city"),
         error: $("#error"),
-        weather: $("#weather-inner"),
-        city: $("#city")
+        weather: $("#weather-inner")
     },
     show: function (message) {
         Loader.hide();
@@ -57,19 +50,18 @@ var ErrorHandler = {
     offline: function () {
         ErrorHandler.show($("#offlineError").html());
     },
-    noLocation: function () {
-        _gaq.push(['_trackEvent', 'nolocation', "missing geolocation"]);
+    noAppLocation: function () {
         ErrorHandler.show($("#locationError").html());
         $("#set-location").submit(function () {
             var address = $('#error form input').val();
             if (!_.isEmpty(address)) {
                 // Geocode address
-                Location.gecodeAddress(address).then(function (data) {
-                    var options = {};
+                AppLocation.gecodeAddress(address).then(function (data) {
+                    var options;
                     options.location = data.location;
                     options.address = data.address;
-                    Storage.clearWeather().then(function () {
-                        Storage.setOptions(options).then(main);
+                    AppStorage.clearWeather().then(function () {
+                        AppStorage.setOptions(options).then(main);
                     });
                 }, function () {
                     // FIXME: Add waring about not finding address.
@@ -84,8 +76,8 @@ var ErrorHandler = {
 };
 var Notifications = {
     urls: {
-        gold: "https://s3.amazonaws.com/currently-notifications/notifications.json",
-        beta: "https://s3.amazonaws.com/currently-notifications/notifications.beta.json"
+        beta: "https://s3.amazonaws.com/currently-notifications/notifications.beta.json",
+        gold: "https://s3.amazonaws.com/currently-notifications/notifications.json"
     },
     current: function (location) {
         // Get notification json
@@ -116,10 +108,13 @@ var Notifications = {
         }
         return true;
     },
-    isInLocation: function (message, location) {
+    isInAppLocation: function (message, location) {
         if (message.geo) {
             if (message.geo.type === "distance") {
-                var pass = geolib.isPointInCircle({ latitude: location.lat, longitude: location.lng }, message.geo.from, (message.geo.distance * 1609.344));
+                var pass = geolib.isPointInCircle({
+                    latitude: location.lat,
+                    longitude: location.lng
+                }, message.geo.from, (message.geo.distance * 1609.344));
                 return pass;
             }
         }
@@ -129,7 +124,7 @@ var Notifications = {
         return false;
     },
     isNew: function (message) {
-        return Storage.seenNotifications().then(function (seen) {
+        return AppStorage.seenNotifications().then(function (seen) {
             return !_.contains(seen, message.id);
         });
     },
@@ -140,7 +135,7 @@ var Notifications = {
                 Notifications.isActive(message),
                 Notifications.isNew(message),
                 Notifications.isInTimeFrame(message),
-                Notifications.isInLocation(message, location)
+                Notifications.isInAppLocation(message, location)
             ]).spread(function (active, isnew, time, location) {
                 if (active && isnew && time && location) {
                     return message;
@@ -174,10 +169,10 @@ var Notifications = {
         return messages;
     },
     getCached: function () {
-        return Storage.getNotifications();
+        return AppStorage.getNotifications();
     },
     cache: function (data) {
-        return Storage.cacheNotifications(data);
+        return AppStorage.cacheNotifications(data);
     },
     url: function () {
         if (inBeta()) {
@@ -198,10 +193,10 @@ var Notifications = {
         });
     },
     finish: function (id) {
-        return Storage.markNotification(id);
+        return AppStorage.markNotification(id);
     }
 };
-var Storage = {
+var AppStorage = {
     cache: {},
     notifications: {
         key: "notifications",
@@ -227,9 +222,9 @@ var Storage = {
             color: "dark-bg"
         }
     },
-    bestStorageLocation: function (type) {
+    bestAppStorageAppLocation: function (type) {
         // Check if recommended location exists if not, save to local;
-        if (Storage[type].location === "sync") {
+        if (AppStorage[type].location === "sync") {
             if (chrome.storage.sync) {
                 return chrome.storage.sync;
             }
@@ -237,28 +232,29 @@ var Storage = {
         return chrome.storage.local;
     },
     load: function (type, use_cache) {
-        if (_.isUndefined(use_cache))
+        if (_.isUndefined(use_cache)) {
             use_cache = true;
-        if (use_cache && Storage.cache[type]) {
-            return Storage.cache[type];
         }
-        else if (!use_cache || !Storage.cache[type]) {
-            var deferred = Q.defer();
-            Storage.bestStorageLocation(type).get(Storage[type].key, function (value) {
+        if (use_cache && AppStorage.cache[type]) {
+            return AppStorage.cache[type];
+        }
+        else if (!use_cache || !AppStorage.cache[type]) {
+            var deferred_1 = Q.defer();
+            this.bestStorageAppLocation(type).get(Storage[type].key, function (value) {
                 if (!_.isEmpty(value)) {
-                    deferred.resolve(value[Storage[type].key]);
+                    deferred_1.resolve(value[AppStorage[type].key]);
                 }
                 else {
-                    deferred.reject(new Error("Missing Data"));
+                    deferred_1.reject(new Error("Missing Data"));
                 }
             });
-            Storage.cache[type] = deferred.promise;
+            AppStorage.cache[type] = deferred_1.promise;
         }
-        return Storage.cache[type];
+        return AppStorage.cache[type];
     },
     save: function (type, data) {
         var deferred = Q.defer();
-        var key = Storage[type].key;
+        var key = AppStorage[type].key;
         function _save(current) {
             var saveData = {};
             if (!_.isNull(current)) {
@@ -267,21 +263,21 @@ var Storage = {
             else {
                 saveData[key] = data;
             }
-            Storage.bestStorageLocation(type).set(saveData, function (value) {
+            this.bestStorageAppLocation(type).set(saveData, function (value) {
                 deferred.resolve(value);
-                Storage.cache[type] = null;
+                AppStorage.cache[type] = null;
             });
         }
-        Storage.load(type, false).then(_save, function () {
+        AppStorage.load(type, false).then(_save, function () {
             _save(null);
         });
         return deferred.promise;
     },
     remove: function (type) {
         var deferred = Q.defer();
-        var key = Storage[type].key;
-        Storage.bestStorageLocation(type).remove(key, function (value) {
-            Storage.cache[type] = null;
+        var key = AppStorage[type].key;
+        this.bestStorageAppLocation(type).remove(key, function (value) {
+            AppStorage.cache[type] = null;
             deferred.resolve(value);
         });
         return deferred.promise;
@@ -298,45 +294,45 @@ var Storage = {
             return parseInt(value);
         }
         else if (_.isUndefined(value)) {
-            return Storage.options.defaults[key];
+            return AppStorage.options.defaults[key];
         }
         else {
             return value;
         }
     },
     getOption: function (key) {
-        return Storage.load("options").then(function (data) {
-            return Storage.castOptions(key, data[key]);
+        return this.load("options").then(function (data) {
+            return AppStorage.castOptions(key, data[key]);
         }, function () {
-            return Storage.options.defaults[key];
+            return AppStorage.options.defaults[key];
         });
     },
     getOptions: function () {
-        return Storage.load("options").then(function (data) {
-            var options = _.clone(Storage.options.defaults);
+        return this.load("options").then(function (data) {
+            var options = _.clone(AppStorage.options.defaults);
             _.each(data, function (value, key) {
-                options[key] = Storage.castOptions(key, value);
+                options[key] = AppStorage.castOptions(key, value);
             });
             return options;
         }, function () {
-            return Storage.options.defaults;
+            return AppStorage.options.defaults;
         });
     },
     setOption: function (key, value) {
-        value = Storage.castOptions(key, value);
+        value = AppStorage.castOptions(key, value);
         var obj = {};
         obj[key] = value;
-        return Storage.save("options", obj);
+        return AppStorage.save("options", obj);
     },
     setOptions: function (data) {
         var options = _.clone(data);
         _.each(options, function (value, key) {
-            options[key] = Storage.castOptions(key, value);
+            options[key] = AppStorage.castOptions(key, value);
         });
-        return Storage.save("options", options);
+        return AppStorage.save("options", options);
     },
     getCachedWeather: function () {
-        return Storage.load("weather")
+        return this.load("weather")
             .then(function (data) {
             var now = new Date();
             if (now.getTime() < (parseInt(data.cachedAt) + 60000 * 60)) {
@@ -348,12 +344,12 @@ var Storage = {
     cacheWeather: function (data) {
         var date = new Date();
         data.cachedAt = date.getTime();
-        return Storage.save("weather", data).then(function () {
+        return AppStorage.save("weather", data).then(function () {
             return data;
         });
     },
     clearWeather: function () {
-        return Storage.remove("weather");
+        return AppStorage.remove("weather");
     },
     cacheNotifications: function (data) {
         var date = new Date();
@@ -361,12 +357,12 @@ var Storage = {
             cachedAt: date.getTime(),
             data: data
         };
-        return Storage.save("notifications", save).then(function () {
+        return AppStorage.save("notifications", save).then(function () {
             return data;
         });
     },
     getNotifications: function () {
-        return Storage.load("notifications")
+        return this.load("notifications")
             .then(function (data) {
             var now = new Date();
             // if (now.getTime() < (parseInt(data.cachedAt) + 15000)) { // Valid for 15 seconds
@@ -377,7 +373,7 @@ var Storage = {
         });
     },
     markNotification: function (id) {
-        return Storage.load("notifications", false)
+        return AppStorage.load("notifications", false)
             .then(function (data) {
             var seen = [];
             if (data.seen) {
@@ -385,24 +381,23 @@ var Storage = {
             }
             seen.push(id);
             data.seen = seen;
-            _gaq.push(['_trackEvent', 'notifications', "seen", id.toString(), 1]);
-            return Storage.save("notifications", data);
+            return AppStorage.save("notifications", data);
         });
     },
     seenNotifications: function () {
-        return Storage.load("notifications").then(function (data) {
+        return this.load("notifications").then(function (data) {
             return data.seen;
         }, function () {
             return [];
         });
     }
 };
-var Location = {
+var AppLocation = {
     getDisplayName: function (location) {
         return Q.when($.ajax({
-            url: "https://maps.googleapis.com/maps/api/geocode/json",
             data: { "latlng": location.lat + "," + location.lng, sensor: false },
-            dataType: "json"
+            dataType: "json",
+            url: "https://maps.googleapis.com/maps/api/geocode/json"
         }))
             .then(function (data) {
             if (data.status === "OK") {
@@ -420,9 +415,9 @@ var Location = {
                     }
                 }
                 var locData = _.uniq(info);
-                if (locData.length === 3) {
-                    locData.pop(2);
-                }
+                // if (locData.length === 3) {
+                //     locData.pop(2);
+                // }
                 return locData.join(", ");
             }
             else {
@@ -474,25 +469,25 @@ var Weather = {
         }
         return url + "q/" + location.lat + "," + location.lng + ".json";
     },
-    atLocation: function (location) {
-        return Storage.getOption("lang").then(function (lang) {
+    atAppLocation: function (location) {
+        return AppStorage.getOption("lang").then(function (lang) {
             return Q.when($.ajax({
                 url: Weather.urlBuilder("conditions/forecast/", location, lang),
                 type: 'GET',
                 dataType: "json"
             }))
                 .then(function (data) {
-                return Location.getDisplayName(location).then(function (name) {
+                return AppLocation.getDisplayName(location).then(function (name) {
                     data.locationDisplayName = name;
                     return data;
                 });
             })
                 .then(Weather.parse)
-                .then(Storage.cacheWeather);
+                .then(AppStorage.cacheWeather);
         });
     },
     parse: function (data) {
-        return Storage.getOption("unitType").then(function (unitType) {
+        return AppStorage.getOption("unitType").then(function (unitType) {
             var startUnitType = "f";
             // Lets only keep what we need.
             var w2 = {
@@ -520,7 +515,7 @@ var Weather = {
     },
     condition: function (url) {
         var matcher = /\/(\w+).gif$/;
-        var code = matcher.exec(url);
+        var code = matcher.exec(url).toString();
         if (code) {
             code = code[1];
         }
@@ -593,7 +588,6 @@ var Weather = {
                 return "2";
             default:
                 console.log("MISSING", code);
-                _gaq.push(['_trackEvent', 'unknowweather', code]);
                 return "T";
         }
     },
@@ -604,7 +598,7 @@ var Weather = {
         // Show Weather & Hide Loader
         $('#weather-inner').removeClass('hidden').show();
         // Show Forecast
-        Storage.getOption('animation').done(function (animation) {
+        AppStorage.getOption('animation').done(function (animation) {
             Weather.$el.forecast.each(function (i, el) {
                 var $el = $(el);
                 if (animation) {
@@ -613,10 +607,6 @@ var Weather = {
                 var dayWeather = wd.forecast[i];
                 Weather.renderDay($el, dayWeather);
             });
-        });
-        // Change link to weather underground
-        $('a.wunder').attr('href', Weather.link(wd)).click(function () {
-            _gaq.push(['_trackEvent', 'button', 'click', 'weather-underground']);
         });
     },
     link: function (data) {
@@ -657,21 +647,21 @@ var Weather = {
     },
     load: function () {
         Loader.show();
-        return Storage.getCachedWeather()
+        return AppStorage.getCachedWeather()
             .fail(function () {
             // No Cache
-            return Storage.getOption("location")
+            return AppStorage.getOption("location")
                 .then(function (location) {
                 if (!_.isEmpty(location)) {
                     return location;
                 }
                 else {
-                    var l = Location.current();
-                    l.fail(ErrorHandler.noLocation);
+                    var l = AppLocation.current();
+                    l.fail(ErrorHandler.noAppLocation);
                     return l;
                 }
             })
-                .then(Weather.atLocation);
+                .then(Weather.atAppLocation);
         });
     }
 };
@@ -687,15 +677,18 @@ var Clock = {
             hour: $('#hourhand')
         }
     },
+    _parts: {},
+    _running: {},
     weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     timeParts: function (options) {
-        var date = new Date(), hour = date.getHours();
+        var date = new Date();
+        var hour = date.getHours();
         if (options.clock === 12) {
             if (hour > 12) {
                 hour = hour - 12;
             }
-            else if (hour === 0) {
+            if (hour === 0) {
                 hour = 12;
             }
         }
@@ -739,7 +732,7 @@ var Clock = {
     },
     start: function (options) {
         if (Clock._running) {
-            clearInterval(Clock._running);
+            // clearInterval(Clock._running);
         }
         function tick() {
             var delayTime = 500;
@@ -752,7 +745,7 @@ var Clock = {
     }
 };
 function style() {
-    Storage.getOptions().done(function (options) {
+    AppStorage.getOptions().done(function (options) {
         // Kick off the clock
         Clock.start(options);
         var $main = $('#main');
@@ -787,7 +780,7 @@ function style() {
 }
 function main() {
     var loader = Weather.load().then(function (data) {
-        Loader.hide(0);
+        Loader.hide();
         Weather.render(data);
     });
     loader.fail(function (reason) {
@@ -798,7 +791,6 @@ function main() {
         else {
             // Unknown error
             console.error(reason);
-            _gaq.push(['_trackEvent', 'error', reason.message]);
         }
     });
     loader.then(function () {
@@ -807,9 +799,8 @@ function main() {
         $('#weather-inner .now').tipsy({ fade: true, delayIn: 500, offset: -20, gravity: 's' });
     });
     // Notifications
-    Location.current().then(Notifications.current).then(function (messages) {
+    AppLocation.current().then(Notifications.current).then(function (messages) {
         if (!_.isEmpty(messages)) {
-            _gaq.push(['_trackEvent', 'notifications', "show", messages[0].id.toString(), 1]);
             $("#update p").html(messages[0].html).parent().data('id', messages[0].id).show(0);
         }
     });
@@ -841,38 +832,18 @@ else {
 /* UI Handlers
 ################################################*/
 $(".home").click(function () {
-    _gaq.push(['_trackEvent', 'button', 'click', 'default-home']);
     chrome.tabs.update({ url: "chrome-internal://newtab/" });
     return false;
 });
 var settings = $('.settings');
-// Analytics
-_gaq.push(['_trackEvent', 'currently', 'version', chrome.runtime.getManifest().version]);
-$('#gift').click(function () {
-    _gaq.push(['_trackEvent', 'button', 'click', 'donation']);
-});
-$('#share').click(function () {
-    _gaq.push(['_trackEvent', 'button', 'click', 'share']);
-});
-$('.vitaly').click(function () {
-    _gaq.push(['_trackEvent', 'button', 'click', 'twitter-vitaly']);
-});
-$('.henry').click(function () {
-    _gaq.push(['_trackEvent', 'button', 'click', 'twitter-henry']);
-});
-$('#support').click(function () {
-    _gaq.push(['_trackEvent', 'button', 'click', 'twitter-henry']);
-});
 setTimeout(function () {
     settings.first().fadeIn(0); // Unhide first settings panel.
 }, 100);
 $(".options").click(function () {
-    _gaq.push(['_trackEvent', 'button', 'click', 'options']);
-    Storage.getOptions().done(function (options) {
+    AppStorage.getOptions().done(function (options) {
         OptionsView.set(options);
         switchPreviewBgColor($("#options #color-pick input").val());
         switchPreviewTextColor($("input[name=textColor]:checked").val());
-        Avgrund.show("#options");
         $('#options #list li:not(#options .active)').each(function (index) {
             $(this).css("-webkit-animation-delay", 80 * index + "ms").addClass('animated fadeInLeft');
         });
@@ -891,7 +862,6 @@ $('#options #list li').click(function () {
     // Update List
     $('#options #list li.active').removeClass('active');
     $el.addClass('active');
-    _gaq.push(['_trackEvent', 'tab', 'change', $el.text()]);
     // Load New Content
     $('.settings.show').fadeOut(0).removeClass('show');
     var idx = $(this).index();
@@ -920,12 +890,9 @@ $("input[name=textColor]").change(function () {
     var $input = $(this);
     switchPreviewTextColor($input.val());
 });
-$("#options #close").click(function () {
-    Avgrund.hide("#options");
-});
 function save(options) {
-    Storage.clearWeather().then(function () {
-        Storage.setOptions(options).then(function () {
+    AppStorage.clearWeather().then(function () {
+        AppStorage.setOptions(options).then(function () {
             style();
             main();
         });
@@ -938,13 +905,13 @@ function save(options) {
 }
 $("#options form").submit(function () {
     var $form = $(this);
-    var options = {};
+    var options;
     _.each($form.serializeArray(), function (inputs) {
         options[inputs.name] = inputs.value;
     });
     if (options.address) {
         // Geocode address
-        Location.gecodeAddress(options.address).then(function (data) {
+        AppLocation.gecodeAddress(options.address).then(function (data) {
             options.location = data.location;
             options.address = data.address;
             save(options);
@@ -977,7 +944,7 @@ var OptionsView = {
         _.each(OptionsView.panel, function (elements, panel) {
             _.each(elements, function ($el, type) {
                 if ($el.is(":radio")) {
-                    $el.filter("[value=" + options[type] + "]").attr("checked", true);
+                    $el.filter("[value=" + options[type] + "]").attr("checked", "checked");
                 }
                 else {
                     $el.val(options[type]);
