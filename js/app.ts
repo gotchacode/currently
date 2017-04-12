@@ -1,17 +1,16 @@
-interface Options {
+interface IOptions {
     location: string;
     address: string;
 }
 
-interface Dates {
+interface IDates {
     start: Date;
     end: Date;
 }
 
-interface Message {
-    dates: Dates;
+interface IMessage {
+    dates: IDates;
 }
-
 
 function OSType() {
     let OSName = "Unknown OS";
@@ -37,16 +36,15 @@ function inBeta() {
     return false;
 }
 
-
 const Loader = {
-    loader: $('#loader'),
+    loader: $("#loader"),
     show() {
-        this.loader.siblings('div').hide();
+        this.loader.siblings("div").hide();
         this.loader.show();
     },
     hide() {
         this.loader.hide();
-    }
+    },
 };
 
 const ErrorHandler = {
@@ -66,43 +64,40 @@ const ErrorHandler = {
         ErrorHandler.$el.error.hide();
         ErrorHandler.$el.weather.show();
     },
-    offline () {
+    offline() {
         ErrorHandler.show($("#offlineError").html());
     },
-    noAppLocation () {
+    noAppLocation() {
         ErrorHandler.show($("#locationError").html());
-        $("#set-location").submit(function () {
-            const address = $('#error form input').val();
+        $("#set-location").submit(() => {
+            const address = $("#error form input").val();
             if (!_.isEmpty(address)) {
                 // Geocode address
-                AppLocation.gecodeAddress(address).then(function (data) {
-                    let options:Options;
+                AppLocation.gecodeAddress(address).then((data) => {
+                    let options:IOptions;
                     options.location = data.location;
                     options.address = data.address;
-                    AppStorage.clearWeather().then(function () {
+                    AppStorage.clearWeather().then(() => {
                         AppStorage.setOptions(options).then(main);
                     });
-                }, function () {
+                }, () => {
                     // FIXME: Add waring about not finding address.
                 });
             }
-            else {
-                // FIXME: Add validation to address
-            }
             return false;
         });
-    }
+    },
 };
 const Notifications = {
     urls: {
         beta: "https://s3.amazonaws.com/currently-notifications/notifications.beta.json",
-        gold: "https://s3.amazonaws.com/currently-notifications/notifications.json"
+        gold: "https://s3.amazonaws.com/currently-notifications/notifications.json",
     },
     current(location) {
         // Get notification json
         return Notifications.request()
             .then(Notifications.parse)
-            .then(function (data) {
+            .then((data) => {
                 return Notifications.filter(data, location);
             });
     },
@@ -114,16 +109,13 @@ const Notifications = {
         if (!message.dates) {
             return true;
         }
-        else if (message.dates.start && !message.dates.end) {
+        if (message.dates.start && !message.dates.end) {
             if (message.dates.start <= now) {
                 return true;
             }
         }
-        else if (message.dates.start && message.dates.end) {
+        if (message.dates.start && message.dates.end) {
             return (message.dates.start <= now && message.dates.end >= now);
-        }
-        else {
-            return false;
         }
         return true;
     },
@@ -131,34 +123,31 @@ const Notifications = {
         if (message.geo) {
             if (message.geo.type === "distance") {
                 const pass = geolib.isPointInCircle(
-                    { 
+                    {
                         latitude: location.lat,
-                        longitude: location.lng
+                        longitude: location.lng,
                     },
                     message.geo.from, (message.geo.distance * 1609.344));
                 return pass;
             }
         }
-        else {
-            return true;
-        }
         return false;
     },
     isNew(message) {
-        return AppStorage.seenNotifications().then(function (seen) {
+        return AppStorage.seenNotifications().then((seen) => {
             return !_.contains(seen, message.id);
         });
     },
-    filter(messages:Message[], location) {
+    filter(messages:IMessage [], location) {
         const checks = [];
         _.each(messages, (message) => {
             const check = Q.all([
                 Notifications.isActive(message),
                 Notifications.isNew(message),
                 Notifications.isInTimeFrame(message),
-                Notifications.isInAppLocation(message, location)
-            ]).spread((active, isnew, time, location) => {
-                if (active && isnew && time && location) {
+                Notifications.isInAppLocation(message, location),
+            ]).spread((active, isnew, time, applocation) => {
+                if (active && isnew && time && applocation) {
                     return message;
                 }
             });
@@ -178,7 +167,7 @@ const Notifications = {
                 return results;
             });
     },
-    parse(messages:Message[]) {
+    parse(messages: IMessage[]) {
         _.each(messages, (message) => {
             if (message.dates) {
                 message.dates.start = new Date(message.dates.start);
@@ -189,63 +178,60 @@ const Notifications = {
         });
         return messages;
     },
-    getCached () {
+    getCached() {
         return AppStorage.getNotifications();
     },
-    cache (data) {
+    cache(data) {
         return AppStorage.cacheNotifications(data);
     },
-    url () {
+    url() {
         if (inBeta()) {
             return Notifications.urls.beta;
         }
-        else {
-            return Notifications.urls.gold;
-        }
+        return Notifications.urls.gold;
     },
-    request () {
-        return Notifications.getCached().then(function (data) {
+    request() {
+        return Notifications.getCached().then((data) => {
             return data;
-        }, function () {
+        }, () => {
             return Q.when($.ajax({
+                dataType: "json",
                 url: Notifications.url(),
-                dataType: "json"
             })).then(Notifications.cache);
         });
     },
-    finish (id) {
+    finish(id) {
         return AppStorage.markNotification(id);
-    }
+    },
 };
-
 
 const AppStorage = {
     cache: {},
     notifications: {
+        defaults: {},
         key: "notifications",
         location: "local",
-        defaults: {}
     },
     weather: {
+        defaults: {},
         key: "weather",
         location: "local",
-        defaults: {}
     },
     options: {
-        key: "options",
-        location: "sync",
         defaults: {
-            unitType: "f",
             clock: 12,
+            unitType: "f",
             seconds: true,
             lang: "EN",
             location: {},
             animation: true,
             textColor: "light-text",
-            color: "dark-bg"
-        }
+            color: "dark-bg",
+        },
+        key: "options",
+        location: "sync",
     },
-    bestAppStorageAppLocation (type) {
+    bestAppStorageAppLocation(type) {
         // Check if recommended location exists if not, save to local;
         if (AppStorage[type].location === "sync") {
             if (chrome.storage.sync) {
@@ -254,28 +240,26 @@ const AppStorage = {
         }
         return chrome.storage.local;
     },
-    load(type, use_cache) {
-        if (_.isUndefined(use_cache)) {
-            use_cache = true;
+    load(type, useCache) {
+        if (_.isUndefined(useCache)) {
+            useCache = true;
         }
-        if (use_cache && AppStorage.cache[type]) {
+        if (useCache && AppStorage.cache[type]) {
             return AppStorage.cache[type];
         }
-        else if (!use_cache || !AppStorage.cache[type]) {
+        if (!useCache || !AppStorage.cache[type]) {
             const deferred = Q.defer();
             this.bestStorageAppLocation(type).get(Storage[type].key, (value) => {
                 if (!_.isEmpty(value)) {
                     deferred.resolve(value[AppStorage[type].key]);
                 }
-                else {
-                    deferred.reject(new Error("Missing Data"));
-                }
+                deferred.reject(new Error("Missing Data"));
             });
             AppStorage.cache[type] = deferred.promise;
         }
         return AppStorage.cache[type];
     },
-    save (type, data) {
+    save(type, data) {
         const deferred = Q.defer();
         const key = AppStorage[type].key;
         function _save(current) {
@@ -283,121 +267,117 @@ const AppStorage = {
             if (!_.isNull(current)) {
                 saveData[key] = _.extend(current, data);
             }
-            else {
-                saveData[key] = data;
-            }
-            this.bestStorageAppLocation(type).set(saveData, function (value) {
+            saveData[key] = data;
+            this.bestStorageAppLocation(type).set(saveData, (value) => {
                 deferred.resolve(value);
                 AppStorage.cache[type] = null;
             });
         }
-        AppStorage.load(type, false).then(_save, function () {
+        AppStorage.load(type, false).then(_save, () => {
             _save(null);
         });
         return deferred.promise;
     },
-    remove (type) {
+    remove(type) {
         const deferred = Q.defer();
         const key = AppStorage[type].key;
-        this.bestStorageAppLocation(type).remove(key, function (value) {
+        this.bestStorageAppLocation(type).remove(key, (value) => {
             AppStorage.cache[type] = null;
             deferred.resolve(value);
         });
         return deferred.promise;
     },
-    castOptions (key, value) {
+    castOptions(key, value) {
         // Case boolean if it is a boolean
-        if (value === 'true') {
+        if (value === "true") {
             return true;
         }
-        else if (value === 'false') {
+        if (value === "false") {
             return false;
         }
-        else if (!_.isNaN(parseInt(value)) && !isNaN(value)) {
-            return parseInt(value);
+        if (!_.isNaN(parseInt(value, 10)) && !isNaN(value)) {
+            return parseInt(value, 10);
         }
-        else if (_.isUndefined(value)) {
+        if (_.isUndefined(value)) {
             return AppStorage.options.defaults[key];
         }
-        else {
-            return value;
-        }
+        return value;
     },
-    getOption (key) {
-        return this.load("options").then(function (data) {
+    getOption(key) {
+        return this.load("options").then((data) => {
             return AppStorage.castOptions(key, data[key]);
-        }, function () {
+        }, () => {
             return AppStorage.options.defaults[key];
         });
     },
-    getOptions () {
-        return this.load("options").then(function (data) {
+    getOptions() {
+        return this.load("options").then((data) => {
             const options = _.clone(AppStorage.options.defaults);
-            _.each(data, function (value, key) {
+            _.each(data, (value, key) => {
                 options[key] = AppStorage.castOptions(key, value);
             });
             return options;
-        }, function () {
+        }, () => {
             return AppStorage.options.defaults;
         });
     },
-    setOption (key, value) {
+    setOption(key, value) {
         value = AppStorage.castOptions(key, value);
         const obj = {};
         obj[key] = value;
         return AppStorage.save("options", obj);
     },
-    setOptions (data) {
+    setOptions(data) {
         const options = _.clone(data);
-        _.each(options, function (value, key) {
+        _.each(options, (value, key) => {
             options[key] = AppStorage.castOptions(key, value);
         });
         return AppStorage.save("options", options);
     },
-    getCachedWeather () {
+    getCachedWeather() {
         return this.load("weather")
-            .then(function (data) {
+            .then((data) => {
                 const now = new Date();
-                if (now.getTime() < (parseInt(data.cachedAt) + 60000 * 60)) {
+                if (now.getTime() < (parseInt(data.cachedAt, 10) + 60000 * 60)) {
                     return data;
                 }
                 throw new Error("Invalid Cache");
             });
     },
-    cacheWeather (data) {
+    cacheWeather(data) {
         const date = new Date();
         data.cachedAt = date.getTime();
-        return AppStorage.save("weather", data).then(function () {
+        return AppStorage.save("weather", data).then(() => {
             return data;
         });
     },
-    clearWeather () {
+    clearWeather() {
         return AppStorage.remove("weather");
     },
-    cacheNotifications (data) {
+    cacheNotifications(data) {
         const date = new Date();
         const save = {
             cachedAt: date.getTime(),
-            data: data
+            data: data,
         };
-        return AppStorage.save("notifications", save).then(function () {
+        return AppStorage.save("notifications", save).then(() => {
             return data;
         });
     },
-    getNotifications () {
+    getNotifications() {
         return this.load("notifications")
-            .then(function (data) {
+            .then((data) => {
                 const now = new Date();
                 // if (now.getTime() < (parseInt(data.cachedAt) + 15000)) { // Valid for 15 seconds
-                if (now.getTime() < (parseInt(data.cachedAt) + 60000 * 120)) {
+                if (now.getTime() < (parseInt(data.cachedAt, 10) + 60000 * 120)) {
                     return data.data;
                 }
                 throw new Error("Invalid Cache");
             });
     },
-    markNotification (id) {
+    markNotification(id) {
         return AppStorage.load("notifications", false)
-            .then(function (data) {
+            .then((data) => {
                 let seen = [];
                 if (data.seen) {
                     seen = data.seen;
@@ -407,19 +387,19 @@ const AppStorage = {
                 return AppStorage.save("notifications", data);
             });
     },
-    seenNotifications () {
-        return this.load("notifications").then(function (data) {
+    seenNotifications() {
+        return this.load("notifications").then((data) => {
             return data.seen;
-        }, function () {
+        }, () => {
             return [];
         });
-    }
+    },
 };
 
 const AppLocation = {
     getDisplayName(location) {
         return Q.when($.ajax({
-            data: { "latlng": location.lat + "," + location.lng, sensor: false },
+            data: {latlng: location.lat + "," + location.lng, sensor: false },
             dataType: "json",
             url: "https://maps.googleapis.com/maps/api/geocode/json",
         }))
@@ -427,15 +407,15 @@ const AppLocation = {
                 if (data.status === "OK") {
                     const result = data.results[0].address_components;
                     const info = [];
-                    for(let i = 0; i < result.length; ++i) {
-                        if (result[i].types[0] == "country") {
-                            info.push(result[i].long_name);
+                    for (const entry of result) {
+                        if (entry.types[0] === "country") {
+                            info.push(entry.long_name);
                         }
-                        if (result[i].types[0] == "administrative_area_level_1") {
-                            info.push(result[i].short_name);
+                        if (entry.types[0] === "administrative_area_level_1") {
+                            info.push(entry.short_name);
                         }
-                        if (result[i].types[0] == "locality") {
-                            info.unshift(result[i].long_name);
+                        if (entry.types[0] === "locality") {
+                            info.unshift(entry.long_name);
                         }
                     }
                     let locData: number[] = _.uniq(info);
@@ -444,64 +424,61 @@ const AppLocation = {
                     // }
                     return locData.join(", ");
                 }
-                else {
-                    throw new Error("Failed to geocode");
-                }
+                throw new Error("Failed to geocode");
             });
     },
     gecodeAddress(address) {
         return Q.when($.ajax({
+            data: {address: address, sensor: false },
+            dataType: "json",
             url: "https://maps.googleapis.com/maps/api/geocode/json",
-            data: { "address": address, sensor: false },
-            dataType: "json"
-        })).then(function (data) {
-            if (data.status == "OK") {
+        })).then((data) => {
+            if (data.status === "OK") {
                 return {
-                    'location': data.results[0].geometry.location,
-                    'address': data.results[0].formatted_address
+                    address: data.results[0].formatted_address,
+                    location: data.results[0].geometry.location,
                 };
             }
         });
     },
-    current () {
+    current() {
         const deferred = Q.defer();
         if (navigator.geolocation) {
             // if (false) {
-            navigator.geolocation.getCurrentPosition(function (position) {
+          navigator.geolocation.getCurrentPosition((position) => {
                 deferred.resolve({ lat: position.coords.latitude, lng: position.coords.longitude });
                 // deferred.resolve({lat: -222, lng: 2})
-            }, function () {
+          }, () => {
                 deferred.reject(new Error("Couldn't find location"));
             });
         }
-        else {
-            deferred.reject(new Error("Geolocation is missing"));
-        }
+        deferred.reject(new Error("Geolocation is missing"));
         return deferred.promise;
-    }
+    },
 };
+
 const Weather = {
     $el: {
-        now: $('.now'),
-        forecast: $('#weather li'),
-        city: $('#city')
+        city: $("#city"),
+        forecast: $("#weather li"),
+        now: $(".now"),
     },
-    urlBuilder (type, location, lang) {
+    urlBuilder(type, location, lang) {
         let url = "http://api.wunderground.com/api/dc203fba39f6674e/" + type + "/";
         if (lang) {
             url = url + "lang:" + lang + "/";
         }
         return url + "q/" + location.lat + "," + location.lng + ".json";
     },
-    atAppLocation (location) {
-        return AppStorage.getOption("lang").then(function (lang) {
+    atAppLocation(location) {
+      return AppStorage.getOption("lang").then((lang) => {
             return Q.when($.ajax({
+                dataType: "json",
+                type: "GET",
                 url: Weather.urlBuilder("conditions/forecast/", location, lang),
-                type: 'GET',
-                dataType: "json"
             }))
-                .then(function (data) {
-                    return AppLocation.getDisplayName(location).then(function (name) {
+          .then((data) => {
+            return AppLocation.getDisplayName(location).then((name) => {
                         data.locationDisplayName = name;
                         return data;
                     });
@@ -510,43 +487,40 @@ const Weather = {
                 .then(AppStorage.cacheWeather);
         });
     },
-    parse (data) {
-        return AppStorage.getOption("unitType").then(function (unitType) {
+    parse(data) {
+      return AppStorage.getOption("unitType").then((unitType) => {
             const startUnitType = "f";
             // Lets only keep what we need.
             const w2 = {
                 city: data.locationDisplayName,
-                weatherUrl: data.current_observation.forecast_url,
                 current: {
                     condition: data.current_observation.weather,
                     conditionCode: Weather.condition(data.current_observation.icon_url),
-                    temp: Weather.tempConvert(data.current_observation.temp_f, startUnitType, unitType)
+                    temp: Weather.tempConvert(data.current_observation.temp_f, startUnitType, unitType),
                 },
-                forecast: []
+                forecast: [],
+                weatherUrl: data.current_observation.forecast_url,
             };
             for (let i = Weather.$el.forecast.length - 1; i >= 0; i--) {
                 const df = data.forecast.simpleforecast.forecastday[i];
                 w2.forecast[i] = {
-                    day: df.date.weekday,
                     condition: df.conditions,
                     conditionCode: Weather.condition(df.icon_url),
+                    day: df.date.weekday,
                     high: Weather.tempConvert(df.high.fahrenheit, startUnitType, unitType),
-                    low: Weather.tempConvert(df.low.fahrenheit, startUnitType, unitType)
+                    low: Weather.tempConvert(df.low.fahrenheit, startUnitType, unitType),
                 };
             }
             return w2;
         });
     },
-    condition (url) {
+    condition(url) {
         const matcher = /\/(\w+).gif$/;
         let code: string = matcher.exec(url).toString();
         if (code) {
             code = code[1];
         }
-        else {
-            // We can't find the code
-            code = null;
-        }
+        code = null;
         switch (code) {
             case "chanceflurries":
             case "chancesnow":
@@ -611,98 +585,88 @@ const Weather = {
             case "nt_mostlysunny":
                 return "2";
             default:
-                console.log("MISSING", code);
                 return "T";
         }
     },
-    render (wd) {
+    render(wd) {
         // Set Current Information
         Weather.renderDay(Weather.$el.now, wd.current);
         Weather.$el.city.html(wd.city).show();
         // Show Weather & Hide Loader
-        $('#weather-inner').removeClass('hidden').show();
+        $("#weather-inner").removeClass("hidden").show();
         // Show Forecast
-        AppStorage.getOption('animation').done(function (animation) {
-            Weather.$el.forecast.each(function (i, el) {
+        AppStorage.getOption("animation").done((animation) => {
+          Weather.$el.forecast.each((i, el) => {
                 const $el = $(el);
                 if (animation) {
-                    $el.css("-webkit-animation-delay", 150 * i + "ms").addClass('animated fadeInUp');
+                    $el.css("-webkit-animation-delay", 150 * i + "ms").addClass("animated fadeInUp");
                 }
                 const dayWeather = wd.forecast[i];
                 Weather.renderDay($el, dayWeather);
             });
         });
     },
-    link (data) {
+    link(data) {
         return data.weatherUrl + "?apiref=846edca2fe64735c";
     },
-    renderDay (el, data) {
+    renderDay(el, data) {
         el.attr("title", data.condition);
-        el.find('.weather').html(data.conditionCode);
+        el.find(".weather").html(data.conditionCode);
         if (!_.isUndefined(data.high) && !_.isUndefined(data.low)) {
-            el.find('.high').html(data.high);
-            el.find('.low').html(data.low);
+            el.find(".high").html(data.high);
+            el.find(".low").html(data.low);
         }
-        else {
-            el.find('.temp').html(data.temp);
-        }
+        el.find(".temp").html(data.temp);
         if (data.day) {
-            el.find('.day').html(data.day);
+            el.find(".day").html(data.day);
         }
     },
-    tempConvert (temp, startType, endType) {
+    tempConvert(temp, startType, endType) {
         temp = Math.round(parseFloat(temp));
         if (startType === "f") {
-            if (endType === 'c') {
+            if (endType === "c") {
                 return Math.round((5 / 9) * (temp - 32));
             }
-            else {
-                return temp;
-            }
+            return temp;
         }
-        else {
-            if (endType === 'c') {
-                return temp;
-            }
-            else {
-                return Math.round((9 / 5) * temp + 32);
-            }
+        if (endType === "c") {
+          return temp;
+        } else {
+          return Math.round((9 / 5) * temp + 32);
         }
     },
-    load () {
+    load() {
         Loader.show();
         return AppStorage.getCachedWeather()
-            .fail(function () {
+          .fail(() => {
                 // No Cache
                 return AppStorage.getOption("location")
-                    .then(function (location) {
+                .then((location) => {
                         if (!_.isEmpty(location)) {
                             return location;
                         }
-                        else {
-                            const l = AppLocation.current();
-                            l.fail(ErrorHandler.noAppLocation);
-                            return l;
-                        }
+                        const l = AppLocation.current();
+                        l.fail(ErrorHandler.noAppLocation);
+                        return l;
                     })
                     .then(Weather.atAppLocation);
             });
-    }
+    },
 };
 
 const Clock = {
     $el: {
-        digital: {
-            time: $('#time'),
-            date: $('#date')
-        },
         analog: {
-            second: $('#secondhand'),
-            minute: $('#minutehand'),
-            hour: $('#hourhand')
-        }
+            hour: $("#hourhand"),
+            minute: $("#minutehand"),
+            second: $("#secondhand"),
+        },
+        digital: {
+            date: $("#date"),
+            time: $("#time"),
+        },
     },
-    _parts:{},
+    _parts: {},
     _running: {},
     weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -719,8 +683,8 @@ const Clock = {
         }
         return {
             // Digital
-            day: Clock.weekdays[date.getDay()],
             date: date.getDate(),
+            day: Clock.weekdays[date.getDay()],
             month: Clock.months[date.getMonth()],
             hour: Clock.appendZero(hour),
             minute: Clock.appendZero(date.getMinutes()),
@@ -728,126 +692,121 @@ const Clock = {
             // Analog
             secondAngle: date.getSeconds() * 6,
             minuteAngle: date.getMinutes() * 6,
-            hourAngle: ((date.getHours() % 12) + date.getMinutes() / 60) * 30
+            hourAngle: ((date.getHours() % 12) + date.getMinutes() / 60) * 30,
         };
     },
-    appendZero (num) {
+    appendZero(num) {
         if (num < 10) {
             return "0" + num;
         }
         return num;
     },
-    dateTemplate (parts) {
+    dateTemplate(parts) {
         return parts.day + ", " + parts.month + " " + parts.date;
     },
-    transformTemplate (angle) {
+    transformTemplate(angle) {
         return "rotate(" + angle + ",50,50)";
     },
-    refresh (options) {
+    refresh(options) {
         const parts = Clock.timeParts(options);
         const oldParts = Clock._parts || {};
         Clock.$el.digital.date.html(Clock.dateTemplate(parts));
-        _.each(['hour', 'minute', 'second'], function (unit) {
+        _.each(["hour", "minute", "second"], (unit) => {
             if (parts[unit] !== oldParts[unit]) {
-                Clock.$el.digital.time.find('.' + unit).text(parts[unit]);
-                Clock.$el.analog[unit].attr("transform", Clock.transformTemplate(parts[unit + 'Angle']));
+                Clock.$el.digital.time.find("." + unit).text(parts[unit]);
+                Clock.$el.analog[unit].attr("transform", Clock.transformTemplate(parts[unit + "Angle"]));
             }
         });
         Clock._parts = parts;
     },
-    start (options) {
+    start(options) {
         if (Clock._running) {
             // clearInterval(Clock._running);
         }
         function tick() {
             const delayTime = 500;
             Clock.refresh(options);
-            Clock._running = setTimeout(function () {
+            Clock._running = setTimeout(() => {
                 window.requestAnimationFrame(tick);
             }, delayTime);
         }
         tick();
-    }
+    },
 };
 function style() {
-    AppStorage.getOptions().done(function (options) {
+    AppStorage.getOptions().done((options) => {
         // Kick off the clock
         Clock.start(options);
-        const $main = $('#main');
+        const $main = $("#main");
         // background Color
         if (!$main.hasClass(options.color)) {
             if ($main.is("[class*='-bg']")) {
-                $main[0].className = $main[0].className.replace(/\w*-bg/g, '');
+                $main[0].className = $main[0].className.replace(/\w*-bg/g, "");
             }
             $main.addClass(options.color);
         }
         // Text Color
         if (!$main.hasClass(options.textColor)) {
             if ($main.is("[class*='-text']")) {
-                $main[0].className = $main[0].className.replace(/\w*-text/g, '');
+                $main[0].className = $main[0].className.replace(/\w*-text/g, "");
             }
             $main.addClass(options.textColor);
         }
         // Remove animation
         if (!options.animation) {
-            $(".animated").removeClass('animated');
-            $(".fadeIn").removeClass('fadeIn');
-            $(".fadeInDown").removeClass('fadeInDown');
+            $(".animated").removeClass("animated");
+            $(".fadeIn").removeClass("fadeIn");
+            $(".fadeInDown").removeClass("fadeInDown");
         }
         if (!options.seconds) {
-            $('#main').addClass('no-seconds');
+            $("#main").addClass("no-seconds");
         }
         // Remove weather
         if (!options.weather) {
-            $('#main #weather').addClass('hidden');
+            $("#main #weather").addClass("hidden");
         }
     });
 }
 function main() {
-    const loader = Weather.load().then(function (data) {
+    const loader = Weather.load().then((data) => {
         Loader.hide();
         Weather.render(data);
     });
-    loader.fail(function (reason) {
+    loader.fail((reason) => {
         if (!navigator.onLine) {
             // We are offline
             ErrorHandler.offline();
         }
-        else {
-            // Unknown error
-            console.error(reason);
-        }
     });
-    loader.then(function () {
-        $('.tipsy').tipsy({ fade: true, delayIn: 500, gravity: 's' });
-        $('#weather-inner li').tipsy({ fade: true, delayIn: 500, offset: 5, gravity: 's' });
-        $('#weather-inner .now').tipsy({ fade: true, delayIn: 500, offset: -20, gravity: 's' });
+    loader.then(() => {
+        $(".tipsy").tipsy({ fade: true, delayIn: 500, gravity: "s" });
+        $("#weather-inner li").tipsy({ fade: true, delayIn: 500, offset: 5, gravity: "s" });
+        $("#weather-inner .now").tipsy({ fade: true, delayIn: 500, offset: -20, gravity: "s" });
     });
     // Notifications
-    AppLocation.current().then(Notifications.current).then(function (messages) {
+    AppLocation.current().then(Notifications.current).then((messages) => {
         if (!_.isEmpty(messages)) {
-            $("#update p").html(messages[0].html).parent().data('id', messages[0].id).show(0);
+            $("#update p").html(messages[0].html).parent().data("id", messages[0].id).show(0);
         }
     });
-    $('#update').click(function () {
+    $("#update").click(() => {
         $(this).fadeOut(100);
-        Notifications.finish($(this).data('id'));
+        Notifications.finish($(this).data("id"));
     });
 }
 // Start your engine....
 style();
 main();
 if (navigator.onLine) {
-    const ga = document.createElement('script');
-    ga.type = 'text/javascript';
+    const ga = document.createElement("script");
+    ga.type = "text/javascript";
     ga.async = true;
-    ga.src = 'https://ssl.google-analytics.com/ga.js';
-    const s = document.getElementsByTagName('script')[0];
+    ga.src = "https://ssl.google-analytics.com/ga.js";
+    const s = document.getElementsByTagName("script")[0];
     s.parentNode.insertBefore(ga, s);
-}
-else {
-    $(window).bind('online', function () {
-        setTimeout(function () {
+} else {
+    $(window).bind("online", () => {
+       setTimeout(() => {
             // wait one second before trying.
             ErrorHandler.hide();
             main();
@@ -856,57 +815,60 @@ else {
 }
 /* UI Handlers
 ################################################*/
-$(".home").click(function () {
+$(".home").click(() => {
     chrome.tabs.update({ url: "chrome-internal://newtab/" });
     return false;
 });
-const settings = $('.settings');
 
-setTimeout(function () {
+const settings = $(".settings");
+
+setTimeout(() => {
     settings.first().fadeIn(0); // Unhide first settings panel.
 }, 100);
-$(".options").click(function () {
-    AppStorage.getOptions().done(function (options) {
+
+$(".options").click(() => {
+    AppStorage.getOptions().done((options) => {
         OptionsView.set(options);
         switchPreviewBgColor($("#options #color-pick input").val());
         switchPreviewTextColor($("input[name=textColor]:checked").val());
-        $('#options #list li:not(#options .active)').each(function (index) {
-            $(this).css("-webkit-animation-delay", 80 * index + "ms").addClass('animated fadeInLeft');
+        $("#options #list li:not(#options .active)").each((index) => {
+            $(this).css("-webkit-animation-delay", 80 * index + "ms").addClass("animated fadeInLeft");
         });
     });
     return false;
 });
 function showOptions() {
     if (window.location.hash === "#options") {
-        $(".options").trigger('click');
+      $(".options").trigger("click");
     }
 }
-$(window).bind('hashchange', showOptions);
+
+$(window).bind("hashchange", showOptions);
 showOptions();
-$('#options #list li').click(function () {
+$("#options #list li").click(() => {
     const $el = $(this);
     // Update List
-    $('#options #list li.active').removeClass('active');
-    $el.addClass('active');
+    $("#options #list li.active").removeClass("active");
+    $el.addClass("active");
     // Load New Content
-    $('.settings.show').fadeOut(0).removeClass('show');
+    $(".settings.show").fadeOut(0).removeClass("show");
     const idx = $(this).index();
-    $(settings[idx]).fadeIn(100).addClass('show');
+    $(settings[idx]).fadeIn(100).addClass("show");
 });
 function switchPreviewBgColor(bgclass) {
     const $li = $("#options #color-pick li");
     const $preview = $("#preview");
     $li.removeClass("active");
     $li.filter("." + bgclass).addClass("active");
-    $preview[0].className = $preview[0].className.replace(/\w*-bg/g, '');
+    $preview[0].className = $preview[0].className.replace(/\w*-bg/g, "");
     $preview.addClass(bgclass);
 }
 function switchPreviewTextColor(textclass) {
     const $preview = $("#preview");
-    $preview[0].className = $preview[0].className.replace(/\w*-text/g, '');
+    $preview[0].className = $preview[0].className.replace(/\w*-text/g, "");
     $preview.addClass(textclass);
 }
-$("#options #color-pick li").click(function () {
+$("#options #color-pick li").click(() => {
     const $li = $(this);
     const className = $li[0].className.match(/\w*-bg/g)[0];
     $("#options #color-pick input").val(className);
@@ -918,33 +880,33 @@ $("input[name=textColor]").change(function () {
 });
 
 function save(options) {
-    AppStorage.clearWeather().then(function () {
-        AppStorage.setOptions(options).then(function () {
-            style();
-            main();
-        });
+   AppStorage.clearWeather().then(() => {
+      AppStorage.setOptions(options).then(() => {
+          style();
+          main();
+      });
         // Save options
-        $("#options button[type=submit]").addClass("saved");
-        setTimeout(function () {
-            $('#options button').removeClass('saved').html('SAVE');
-        }, 500);
+      $("#options button[type=submit]").addClass("saved");
+      setTimeout(() => {
+        $("#options button").removeClass("saved").html("SAVE");
+      }, 500);
     });
 }
-$("#options form").submit(function () {
+
+$("#options form").submit(() => {
     const $form = $(this);
-    let options:Options;
-    _.each($form.serializeArray(), function (inputs) {
+    let options:IOptions;
+    _.each($form.serializeArray(), (inputs) => {
         options[inputs.name] = inputs.value;
     });
     if (options.address) {
         // Geocode address
-        AppLocation.gecodeAddress(options.address).then(function (data) {
+        AppLocation.gecodeAddress(options.address).then((data) => {
             options.location = data.location;
             options.address = data.address;
             save(options);
         });
-    }
-    else {
+    } else {
         options.location = undefined;
         options.address = undefined;
         save(options);
@@ -953,31 +915,29 @@ $("#options form").submit(function () {
 });
 const OptionsView = {
     panel: {
-        system: {
-            unitType: $("input[name=unitType]"),
-            clock: $("input[name=clock]"),
-            lang: $("select[name=lang]"),
-            address: $("input[name=address]")
-        },
         layout: {
-            ananimation: $("input[name=animation]")
+            ananimation: $("input[name=animation]"),
         },
         style: {
+            color: $("#color-pick input[type=hidden]"),
             textColor: $("input[name=textColor]"),
-            color: $("#color-pick input[type=hidden]")
-        }
+        },
+        system: {
+            address: $("input[name=address]"),
+            clock: $("input[name=clock]"),
+            lang: $("select[name=lang]"),
+            unitType: $("input[name=unitType]"),
+        },
     },
-    set (options) {
-        _.each(OptionsView.panel, function (elements, panel) {
-            _.each(elements, function ($el, type) {
+    set(options) {
+        _.each(OptionsView.panel, (elements, panel) => {
+          _.each(elements, ($el, type) => {
                 if ($el.is(":radio")) {
                     $el.filter("[value=" + options[type] + "]").attr("checked", "checked");
-                }
-                else {
+                } else {
                     $el.val(options[type]);
                 }
             });
         });
-    }
+    },
 };
-//# sourceMappingURL=app.js.map
