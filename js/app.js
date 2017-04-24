@@ -29,30 +29,30 @@ var Loader = {
     },
     hide: function () {
         this.loader.hide();
-    }
+    },
 };
 var ErrorHandler = {
     $el: {
         city: $("#city"),
         error: $("#error"),
-        weather: $("#weather-inner")
+        weather: $("#weather-inner"),
     },
     show: function (message) {
         Loader.hide();
-        ErrorHandler.$el.error.html(message);
-        ErrorHandler.$el.error.show();
-        ErrorHandler.$el.weather.hide();
-        ErrorHandler.$el.city.hide();
+        this.$el.error.html(message);
+        this.$el.error.show();
+        this.$el.weather.hide();
+        this.$el.city.hide();
     },
     hide: function () {
-        ErrorHandler.$el.error.hide();
-        ErrorHandler.$el.weather.show();
+        this.$el.error.hide();
+        this.$el.weather.show();
     },
     offline: function () {
-        ErrorHandler.show($("#offlineError").html());
+        this.show($("#offlineError").html());
     },
     noAppLocation: function () {
-        ErrorHandler.show($("#locationError").html());
+        this.show($("#locationError").html());
         $("#set-location").submit(function () {
             var address = $("#error form input").val();
             if (!_.isEmpty(address)) {
@@ -70,17 +70,17 @@ var ErrorHandler = {
             }
             return false;
         });
-    }
+    },
 };
 var Notifications = {
     urls: {
         beta: "https://s3.amazonaws.com/currently-notifications/notifications.beta.json",
-        gold: "https://s3.amazonaws.com/currently-notifications/notifications.json"
+        gold: "https://s3.amazonaws.com/currently-notifications/notifications.json",
     },
     current: function (location) {
         // Get notification json
-        return Notifications.request()
-            .then(Notifications.parse)
+        return this.request()
+            .then(this.parse)
             .then(function (data) {
             return Notifications.filter(data, location);
         });
@@ -108,7 +108,7 @@ var Notifications = {
             if (message.geo.type === "distance") {
                 var pass = geolib.isPointInCircle({
                     latitude: location.lat,
-                    longitude: location.lng
+                    longitude: location.lng,
                 }, message.geo.from, (message.geo.distance * 1609.344));
                 return pass;
             }
@@ -178,25 +178,25 @@ var Notifications = {
         }, function () {
             return Q.when($.ajax({
                 dataType: "json",
-                url: Notifications.url()
+                url: Notifications.url(),
             })).then(Notifications.cache);
         });
     },
     finish: function (id) {
         return AppStorage.markNotification(id);
-    }
+    },
 };
 var AppStorage = {
     cache: {},
     notifications: {
         defaults: {},
         key: "notifications",
-        location: "local"
+        location: "local",
     },
     weather: {
         defaults: {},
         key: "weather",
-        location: "local"
+        location: "local",
     },
     options: {
         defaults: {
@@ -207,10 +207,10 @@ var AppStorage = {
             location: {},
             animation: true,
             textColor: "light-text",
-            color: "dark-bg"
+            color: "dark-bg",
         },
         key: "options",
-        location: "sync"
+        location: "sync",
     },
     bestAppStorageAppLocation: function (type) {
         // Check if recommended location exists if not, save to local;
@@ -339,7 +339,7 @@ var AppStorage = {
         var date = new Date();
         var save = {
             cachedAt: date.getTime(),
-            data: data
+            data: data,
         };
         return AppStorage.save("notifications", save).then(function () {
             return data;
@@ -374,14 +374,14 @@ var AppStorage = {
         }, function () {
             return [];
         });
-    }
+    },
 };
 var AppLocation = {
     getDisplayName: function (location) {
         return Q.when($.ajax({
             data: { latlng: location.lat + "," + location.lng, sensor: false },
             dataType: "json",
-            url: "https://maps.googleapis.com/maps/api/geocode/json"
+            url: "https://maps.googleapis.com/maps/api/geocode/json",
         }))
             .then(function (data) {
             if (data.status === "OK") {
@@ -412,12 +412,12 @@ var AppLocation = {
         return Q.when($.ajax({
             data: { address: address, sensor: false },
             dataType: "json",
-            url: "https://maps.googleapis.com/maps/api/geocode/json"
+            url: "https://maps.googleapis.com/maps/api/geocode/json",
         })).then(function (data) {
             if (data.status === "OK") {
                 return {
                     address: data.results[0].formatted_address,
-                    location: data.results[0].geometry.location
+                    location: data.results[0].geometry.location,
                 };
             }
         });
@@ -435,13 +435,13 @@ var AppLocation = {
         }
         deferred.reject(new Error("Geolocation is missing"));
         return deferred.promise;
-    }
+    },
 };
 var Weather = {
     $el: {
         city: $("#city"),
         forecast: $("#weather li"),
-        now: $(".now")
+        now: $(".now"),
     },
     urlBuilder: function (type, location, lang) {
         var url = "http://api.wunderground.com/api/dc203fba39f6674e/" + type + "/";
@@ -455,7 +455,7 @@ var Weather = {
             return Q.when($.ajax({
                 dataType: "json",
                 type: "GET",
-                url: Weather.urlBuilder("conditions/forecast/", location, lang)
+                url: Weather.urlBuilder("conditions/forecast/", location, lang),
             }))
                 .then(function (data) {
                 return AppLocation.getDisplayName(location).then(function (name) {
@@ -476,10 +476,10 @@ var Weather = {
                 current: {
                     condition: data.current_observation.weather,
                     conditionCode: Weather.condition(data.current_observation.icon_url),
-                    temp: Weather.tempConvert(data.current_observation.temp_f, startUnitType, unitType)
+                    temp: Weather.tempConvert(data.current_observation.temp_f, startUnitType, unitType),
                 },
                 forecast: [],
-                weatherUrl: data.current_observation.forecast_url
+                weatherUrl: data.current_observation.forecast_url,
             };
             for (var i = Weather.$el.forecast.length - 1; i >= 0; i--) {
                 var df = data.forecast.simpleforecast.forecastday[i];
@@ -488,7 +488,7 @@ var Weather = {
                     conditionCode: Weather.condition(df.icon_url),
                     day: df.date.weekday,
                     high: Weather.tempConvert(df.high.fahrenheit, startUnitType, unitType),
-                    low: Weather.tempConvert(df.low.fahrenheit, startUnitType, unitType)
+                    low: Weather.tempConvert(df.low.fahrenheit, startUnitType, unitType),
                 };
             }
             return w2;
@@ -570,8 +570,8 @@ var Weather = {
     },
     render: function (wd) {
         // Set Current Information
-        Weather.renderDay(Weather.$el.now, wd.current);
-        Weather.$el.city.html(wd.city).show();
+        this.renderDay(this.$el.now, wd.current);
+        this.$el.city.html(wd.city).show();
         // Show Weather & Hide Loader
         $("#weather-inner").removeClass("hidden").show();
         // Show Forecast
@@ -632,19 +632,19 @@ var Weather = {
             })
                 .then(Weather.atAppLocation);
         });
-    }
+    },
 };
 var Clock = {
     $el: {
         analog: {
             hour: $("#hourhand"),
             minute: $("#minutehand"),
-            second: $("#secondhand")
+            second: $("#secondhand"),
         },
         digital: {
             date: $("#date"),
-            time: $("#time")
-        }
+            time: $("#time"),
+        },
     },
     _parts: {},
     _running: {},
@@ -672,7 +672,7 @@ var Clock = {
             // Analog
             secondAngle: date.getSeconds() * 6,
             minuteAngle: date.getMinutes() * 6,
-            hourAngle: ((date.getHours() % 12) + date.getMinutes() / 60) * 30
+            hourAngle: ((date.getHours() % 12) + date.getMinutes() / 60) * 30,
         };
     },
     appendZero: function (num) {
@@ -711,7 +711,7 @@ var Clock = {
             }, delayTime);
         }
         tick();
-    }
+    },
 };
 function style() {
     AppStorage.getOptions().done(function (options) {
@@ -893,18 +893,18 @@ $("#options form").submit(function () {
 var OptionsView = {
     panel: {
         layout: {
-            ananimation: $("input[name=animation]")
+            ananimation: $("input[name=animation]"),
         },
         style: {
             color: $("#color-pick input[type=hidden]"),
-            textColor: $("input[name=textColor]")
+            textColor: $("input[name=textColor]"),
         },
         system: {
             address: $("input[name=address]"),
             clock: $("input[name=clock]"),
             lang: $("select[name=lang]"),
-            unitType: $("input[name=unitType]")
-        }
+            unitType: $("input[name=unitType]"),
+        },
     },
     set: function (options) {
         _.each(OptionsView.panel, function (elements, panel) {
@@ -917,5 +917,5 @@ var OptionsView = {
                 }
             });
         });
-    }
+    },
 };

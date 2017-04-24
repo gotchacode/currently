@@ -55,20 +55,20 @@ const ErrorHandler = {
     },
     show(message) {
         Loader.hide();
-        ErrorHandler.$el.error.html(message);
-        ErrorHandler.$el.error.show();
-        ErrorHandler.$el.weather.hide();
-        ErrorHandler.$el.city.hide();
+        this.$el.error.html(message);
+        this.$el.error.show();
+        this.$el.weather.hide();
+        this.$el.city.hide();
     },
     hide() {
-        ErrorHandler.$el.error.hide();
-        ErrorHandler.$el.weather.show();
+        this.$el.error.hide();
+        this.$el.weather.show();
     },
     offline() {
-        ErrorHandler.show($("#offlineError").html());
+        this.show($("#offlineError").html());
     },
     noAppLocation() {
-        ErrorHandler.show($("#locationError").html());
+        this.show($("#locationError").html());
         $("#set-location").submit(() => {
             const address = $("#error form input").val();
             if (!_.isEmpty(address)) {
@@ -95,8 +95,8 @@ const Notifications = {
     },
     current(location) {
         // Get notification json
-        return Notifications.request()
-            .then(Notifications.parse)
+        return this.request()
+            .then(this.parse)
             .then((data) => {
                 return Notifications.filter(data, location);
             });
@@ -590,8 +590,8 @@ const Weather = {
     },
     render(wd) {
         // Set Current Information
-        Weather.renderDay(Weather.$el.now, wd.current);
-        Weather.$el.city.html(wd.city).show();
+        this.renderDay(this.$el.now, wd.current);
+        this.$el.city.html(wd.city).show();
         // Show Weather & Hide Loader
         $("#weather-inner").removeClass("hidden").show();
         // Show Forecast
