@@ -1,0 +1,31 @@
+<div class="theme-settings" ng-show="theme">
+    <section>
+        <h2>{{ theme.name }}</h2>
+
+        <p>{{ theme.description }}</p>
+    </section>
+    <ng-include src="getThemeTemplate()"></ng-include>
+    <div class="action-bar">
+        <a href="#"
+           analytics-on
+           analytics-event="save"
+           analytics-category="themes"
+           analytics-label="{{ theme.slug }}"
+           class="button"
+           ng-click="save()"
+           ng-show="theme.owned"
+                >Save</a>
+        <a href="#"
+           analytics-on
+           analytics-event="buy"
+           analytics-category="themes"
+           analytics-label="{{ theme.slug }}"
+           class="button"
+           ng-click="buy()"
+           ng-hide="theme.owned"
+                ><i ng-show="buying" class="fa fa-spinner fa-spin"></i><span ng-hide="buying" class="buy">Buy | <span>{{ theme.store.prices[0].valueMicros|webStoreCurrency:theme.store.prices[0].currencyCode}}</span></span></a>
+    </div>
+    <p class="something-wrong" ng-show="closedBuying" >
+      Can't add a credit card? Try going directly to <a href="https://wallet.google.com/manage/#paymentMethods:" target="_blank">Google Wallet</a>.
+    </p>
+</div>

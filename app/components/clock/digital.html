@@ -1,0 +1,5 @@
+<div id="time" class="smooth">
+    <span class="hour">{{ time.hour|zeroPad }}</span>
+    <span class="minute">{{ time.minute|zeroPad }}</span>
+    <span class="second" ng-show="settings.secondsEnabled">{{ time.second|zeroPad }}</span>
+</div>

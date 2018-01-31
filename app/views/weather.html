@@ -1,0 +1,32 @@
+<div ng-controller="WeatherController" >
+    <div id="weather" hotkey="{t: toggleTemperatureUnit}">
+        <div id="loader" class="status" ng-hide="weather">Y</div>
+        <div id="weather-inner" class="clearfix" ng-show="weather">
+            <div class="now smooth">
+                <span class='weather'>{{ weather.current.icon_url | conditionCode}}</span>
+                <b class="temp">{{ weather.current.tempConverted }}</b>
+                <p class="label">Now</p>
+                <p class="condition">{{weather.current.condition}}</p>
+            </div>
+            <ul class='clearfix'>
+                <li class="weather-container" ng-repeat="day in weather.forecast">
+                    <span class='weather smooth'>{{ day.icon_url|conditionCode }}</span>
+
+                    <div class="temp">
+                        <div class="w-left">
+                            <p class="high">{{ day.highConverted}}</p>
+                        </div>
+                        <div class="w-mid"></div>
+                        <div class="w-right">
+                            <p class="low">{{ day.lowConverted}}</p>
+                        </div>
+                    </div>
+                    <p class="day">{{ day.day }}</p>
+                    <p class="condition">{{day.condition}}</p>
+                </li>
+            </ul>
+        </div>
+        <div id="city" class="title">{{ weather.city }}</div>
+    </div>
+
+</div>

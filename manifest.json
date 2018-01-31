@@ -1,8 +1,9 @@
 {
    "chrome_url_overrides": {
-      "newtab": "index.html"
+      "newtab": "app/index.html"
    },
    "content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://widget.uservoice.com/; object-src 'self'",
+   "default_locale": "en",
    "description": "Replace new tab screen with current time and weather.",
    "icons": {
       "128": "images/icon128.png",
@@ -12,8 +13,8 @@
    "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDBY3p6E6TGtVMLW3Lb1h2GZNgji/UOCGXaSnrnnNfV5xGzM+A7IYYUgDiwYnsgRVT2SX9F7s36aEqbVEil5oqsRbxHIMuzyB8Cdj9Y6zOF9jZz/mDhGE+gyDdsYBBfbzGeNCSGrHW/CX5EH75tipTWAv7jdruoqnEyotbIShHaTwIDAQAB",
    "manifest_version": 2,
    "name": "Currently",
-   "options_page": "index.html#options",
-   "permissions": [ "storage", "geolocation", "unlimitedStorage", "https://maps.googleapis.com/maps/api/", "http://api.wunderground.com/api", "https://ssl.google-analytics.com/", "https://s3.amazonaws.com/" ],
+   "options_page": "app/index.html#/drawer/settings",
+   "permissions": [ "storage", "unlimitedStorage", "geolocation", "unlimitedStorage", "https://maps.googleapis.com/maps/api/", "http://api.wunderground.com/api", "https://ssl.google-analytics.com/", "https://s3.amazonaws.com/" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "2.7.1"
+   "version": "3.2.2"
 }

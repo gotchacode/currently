@@ -1,0 +1,29 @@
+<div ng-show="themes" id="themes-container">
+    <ul class="themes-list">
+        <li ng-repeat="theme in themes" ng-show="!!theme.visibility">
+            <a class="item" ui-sref-active="active" ui-sref="drawer.themes.detail({slug:theme.slug})">
+                <div class="preview">
+                    <ng-include src="getThemeIconTemplate(theme)">
+                </div>
+                <p class="label">
+                    {{ theme.name }}
+                    <span ng-show="!theme.owned" class="owned-theme" title="For Sale" tipsy fade="true" offset="5" delay-in="100" gravity="s"><i class="fa fa-usd"></i></span>
+                    <span ng-show="theme.isActive" class="active-theme" tipsy fade="true" offset="5" delay-in="100" gravity="s" title="Active Theme" ><i class="fa fa-check"></i></span>
+                </p>
+
+                <p class="desc">{{ theme.description }}</p>
+            </a>
+        </li>
+        <div class="please-login" ng-show="!storeIsOpen">
+            Oops! Something is wrong with the Chrome Webstore. We are looking into this! In the meantime, double check that you are logged in <a ng-click="openChromeSettings()">Chrome Settings</a>.
+        </div>
+    </ul>
+
+    <div class="theme_detail" ui-view></div>
+</div>
+
+<div ng-hide="themes">
+    <div id="loader" class="status">Y</div>
+</div>
+
+

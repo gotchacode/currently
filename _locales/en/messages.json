@@ -1,0 +1,10 @@
+{
+   "application_description": {
+      "description": "The description of the application, displayed in the web store.",
+      "message": "This is the minimal set of data required to upload a localized hosted application to the web store."
+   },
+   "application_title": {
+      "description": "The title of the application, displayed in the web store.",
+      "message": "Minimal Localized Hosted App"
+   }
+}

@@ -1,0 +1,23 @@
+<div class="support">
+    <section>
+        <a class="normal" href="http://rainfalldesign.quora.com/"><i class="fa fa-newspaper-o"></i> Updates On Our Blog</a>
+    </section>
+    <section>
+        <a class="normal" href="http://chromecurrently.uservoice.com/forums/170424-general" target="_blank"
+           id="support"><i class="fa fa-lightbulb-o"></i> Give Feedback</a>
+    </section>
+    <section>
+        <a class="normal" href="http://chromecurrently.uservoice.com" target="_blank" id="support"><i
+                class="fa fa-bug"></i> Report A Bug</a>
+    </section>
+
+    <div id="debug" ng-controller="DebugController">
+        <section>
+            <a href="#" class="clear" ng-click="clearSettings()"><i class="fa fa-bomb"></i>Clear Settings</a>
+            <span>This should be used with caution, it will clear all your currently settings.</span>
+        </section>
+        <section>
+            <span>Current Version: {{ version }}</span>
+        </section>
+    </div>
+</div>

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="currently" ng-csp="">
+<head ng-controller="HeadController">
+    <title ng-bind-template="{{ currentTemperatureConverted }}&#xB0; | Currently"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="/css/application.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../images/icon16.png">
+    <script type="text/javascript" src="/app/app.js"></script>
+    <script type="text/javascript" src="/app/config.js"></script>
+
+    <!--
+                  ;;
+                 ;;;;
+                ;;;;;;;
+               ;;;;;;;;;
+             ;;;;;;;;;;;;
+            ;;;;;;;;;;;;;;;
+          ;;;;;;;;;;;;;;;;;;;           ;||;;;;;||;            ;;;             ;|;;           ;|;  ;|;
+         ;;;;;;;;;;;;;;;;;;;;;          ;||      ||;  ;;;;;;        ;; ;;;;    ||    ;;;;;;   ;|;  ;|;
+        ;;;;;;;;;;;;;;;;;;;;;;;         ;||;;;;;;|;  ;|;  ;||; ;|;  ||;  ;|| ;;||;; ;|;  ;||  ;|;  ;|;
+       ;;;;;;;;;;;;;;;;;;;;;;;;;        ;||;;;;;||;   ;;;;;||; ;|;  ||    ;|;  ||    ;;;;;||  ;|;  ;|;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;       ;||      ||  ||;   ||; ;|;  ||    ;|;  ||   ||    ||  ;|;  ;|;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;       ;||      ;|; ;||;;;;|| ;|;  ||    ;|   ;|   ;||;;;;|; ;|;  ;|;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+       ;;;;;;;;;;;;;;;;;;;;;;;;;
+         ;;;;;;;;;;;;;;;;;;;;;
+           ;;;;;;;;;;;;;;;;
+                 ;;;;;;
+
+    -->
+</head>
+<body ng-class="{welcome:welcome}">
+
+<!-- Begin Templates -->
+<script type="text/ng-template" id="/app/views/credits.html">
+<div class="credits">
+	<a href="https://twitter.com/henrymodis" target="_blank" class="person-item">
+		<div class="face henry"></div>
+		<p class="name">Henry Modisett</p>
+		<p class="who">Design &middot; San Francisco, CA &middot; @henrymodis</p>
+	</a>
+	<a href="https://twitter.com/vitaly_babiy" target="_blank" class="person-item">
+		<div class="face vitaly"></div>
+		<p class="name">Vitaly Babiy</p>
+		<p class="who">Engineering &middot; Charlotte, NC &middot; @vitaly_babiy</p>
+	</a>
+	<a href="https://twitter.com/nataliefschoch" target="_blank" class="person-item">
+		<div class="face natalie"></div>
+		<p class="name">Natalie Schoch</p>
+		<p class="who">Illustration &middot; San Francisco, CA &middot; @nataliefschoch</p>
+	</a>
+</div>
+</script>
+<script type="text/ng-template" id="/app/views/drawer.html">
+<!-- FIXME: Remove ng-click and use a route.-->
+<div class="settings2">
+    <i class="fa fa-close close-settings" ng-click="closeOptions()" hotkey="{esc:closeOptions}"></i>
+    <ul class="view-switch">
+        <div id="logo"></div>
+        <li id="show-themes">
+            <a ui-sref="drawer.themes" ui-sref-active="active">
+                <i class="fa fa-paint-brush"></i> Themes
+            </a>
+        </li>
+        <li id="show-options">
+            <a ui-sref="drawer.settings" ui-sref-active="active">
+                <i class="fa fa-gear"></i>
+                Options
+            </a>
+        </li>
+        <li id="show-credits">
+            <a ui-sref="drawer.credits" ui-sref-active="active">
+                <i class="fa fa-heart"></i>
+                Credits
+            </a>
+        </li>
+        <li id="show-support">
+            <a ui-sref="drawer.support" ui-sref-active="active">
+                <i class="fa fa-medkit"></i>
+                Support
+            </a>
+        </li>
+        <div class="sharing">
+            <li>
+                <a href="https://twitter.com/share?text=Currently+2+is+beautiful!+http%3A%2F%2Fbit.ly%2FPMawVf+%23currently+%23chrome+by+%40vitaly_babiy+and+%40henrymodis"
+                   target="_blank" id="share"><i class="fa fa-twitter"></i>Share</a>
+            </li>
+
+            <li>
+                <a target="_blank"
+                   href="http://www.facebook.com/sharer/sharer.php?u=https://chrome.google.com/webstore/detail/currently/ojhmphdkpgbibohbnpbfiefkgieacjmh?hl=en"><i
+                        class="fa fa-facebook-square"></i>Share</a>
+            </li>
+        </div>
+    </ul>
+
+    <!-- Bottom Pane-->
+    <div class="themes" ui-view></div>
+</div>
+
+<div id="demo" currently-demo>
+    <div class="demo-icon weather-icon" ng-show="theme.symbol.icon">v</div>
+    <digital-clock ng-show="theme.symbol.clock" demo="true"></digital-clock>
+    <div class="demo-temp" ng-show="theme.symbol.weather">{{ data.weather.temp }}&#176;</div>
+</div>
+
+</script>
+<script type="text/ng-template" id="/app/views/error_message.html">
+{{ error.stack }}
+</script>
+<script type="text/ng-template" id="/app/views/home.html">
+<div id="time-weather">
+	<analog-clock></analog-clock>
+	<digital-clock></digital-clock>
+
+	<p id="date" class="title"> {{ currentDate|date:'EEEE, MMMM d' }}</p>
+
+	<ng-include src="'/app/views/weather.html'" ng-hide="ctrl.errors.hasError"></ng-include>
+</div>
+<div class="error" ng-show="ctrl.errors.hasError" ng-switch="ctrl.errors.errorType">
+    <offline-error ng-switch-when="offline"></offline-error>
+    <missing-location-error ng-switch-when="location"></missing-location-error>
+    <default-error ng-switch-default></default-error>
+</div>
+
+
+
+</script>
+<script type="text/ng-template" id="/app/views/settings.html">
+<div class="options">
+    <form>
+        <section>
+            <h2>Temperature</h2>
+
+            <div class="group">
+                <input name="unitType" type="radio" value="f" id="fahrenheit" ng-model="settings.unit"/>
+                <label for="fahrenheit">Fahrenheit</label>
+            </div>
+            <div class="group">
+                <input name="unitType" type="radio" value="c" id="celsius" ng-model="settings.unit"/>
+                <label for="celsius">Celsius</label>
+            </div>
+        </section>
+        <section>
+            <h2>Hours</h2>
+
+            <div class="group">
+                <input name="clock" type="radio" ng-value="12" id="time12" ng-model="settings.hoursFormat"/>
+                <label for="time12">12</label>
+            </div>
+            <div class="group">
+                <input name="clock" type="radio" ng-value="24" id="time24" ng-model="settings.hoursFormat"/>
+                <label for="time24">24</label>
+            </div>
+        </section>
+        <section>
+            <h2>Seconds</h2>
+
+            <div class="group">
+                <input name="seconds" type="radio" ng-value="true" id="show-seconds"
+                       ng-model="settings.secondsEnabled"/>
+                <label for="show-seconds">On</label>
+            </div>
+            <div class="group">
+                <input name="seconds" type="radio" ng-value="false" id="hide-seconds"
+                       ng-model="settings.secondsEnabled"/>
+                <label for="hide-seconds">Off</label>
+            </div>
+        </section>
+        <section>
+            <h2>Choose Your Language</h2>
+
+            <div class="group">
+                <select name="lang" id="lang" ng-model="settings.language">
+                    <option value="AF">Afrikaans</option>
+                    <option value="AL">Albanian</option>
+                    <option value="AR">Arabic</option>
+                    <option value="HY">Armenian</option>
+                    <option value="AZ">Azerbaijani</option>
+                    <option value="EU">Basque</option>
+                    <option value="BY">Belarusian</option>
+                    <option value="BU">Bulgarian</option>
+                    <option value="LI">British English</option>
+                    <option value="MY">Burmese</option>
+                    <option value="CA">Catalan</option>
+                    <option value="CN">Chinese - Simplified</option>
+                    <option value="TW">Chinese - Traditional</option>
+                    <option value="CR">Croatian</option>
+                    <option value="CZ">Czech</option>
+                    <option value="DK">Danish</option>
+                    <option value="DV">Dhivehi</option>
+                    <option value="NL">Dutch</option>
+                    <option value="EN">English</option>
+                    <option value="EO">Esperanto</option>
+                    <option value="ET">Estonian</option>
+                    <option value="FA">Farsi</option>
+                    <option value="FI">Finnish</option>
+                    <option value="FR">French</option>
+                    <option value="FC">French Canadian</option>
+                    <option value="GZ">Galician</option>
+                    <option value="DL">German</option>
+                    <option value="KA">Georgian</option>
+                    <option value="GR">Greek</option>
+                    <option value="GU">Gujarati</option>
+                    <option value="HT">Haitian Creole</option>
+                    <option value="IL">Hebrew</option>
+                    <option value="HI">Hindi</option>
+                    <option value="HU">Hungarian</option>
+                    <option value="IS">Icelandic</option>
+                    <option value="IO">Ido</option>
+                    <option value="ID">Indonesian</option>
+                    <option value="IR">Irish Gaelic</option>
+                    <option value="IT">Italian</option>
+                    <option value="JP">Japanese</option>
+                    <option value="JW">Javanese</option>
+                    <option value="KM">Khmer</option>
+                    <option value="KR">Korean</option>
+                    <option value="KU">Kurdish</option>
+                    <option value="LA">Latin</option>
+                    <option value="LV">Latvian</option>
+                    <option value="LT">Lithuanian</option>
+                    <option value="ND">Low German</option>
+                    <option value="MK">Macedonian</option>
+                    <option value="MT">Maltese</option>
+                    <option value="GM">Mandinka</option>
+                    <option value="MI">Maori</option>
+                    <option value="MR">Marathi</option>
+                    <option value="MN">Mongolian</option>
+                    <option value="NO">Norwegian</option>
+                    <option value="OC">Occitan</option>
+                    <option value="PS">Pashto</option>
+                    <option value="GN">Plautdietsch</option>
+                    <option value="PL">Polish</option>
+                    <option value="BR">Portuguese</option>
+                    <option value="PA">Punjabi</option>
+                    <option value="RO">Romanian</option>
+                    <option value="RU">Russian</option>
+                    <option value="SR">Serbian</option>
+                    <option value="SK">Slovak</option>
+                    <option value="SL">Slovenian</option>
+                    <option value="SP">Spanish</option>
+                    <option value="SI">Swahili</option>
+                    <option value="SW">Swedish</option>
+                    <option value="CH">Swiss</option>
+                    <option value="TL">Tagalog</option>
+                    <option value="TT">Tatarish</option>
+                    <option value="TH">Thai</option>
+                    <option value="TR">Turkish</option>
+                    <option value="TK">Turkmen</option>
+                    <option value="UA">Ukrainian</option>
+                    <option value="UZ">Uzbek</option>
+                    <option value="VU">Vietnamese</option>
+                    <option value="CY">Welsh</option>
+                    <option value="SN">Wolof</option>
+                    <option value="JI">Yiddish - transliterated</option>
+                    <option value="YI">Yiddish - unicode</option>
+                </select>
+            </div>
+        </section>
+        <section>
+            <h2>Zoom Level</h2>
+
+            <div class="group">
+                <select name="zoom" id="zoom" ng-model="settings.zoom">
+                    <option value="auto">Auto</option>
+                    <option value="in">Zoomed In</option>
+                    <option value="out">Zoomed Out</option>
+                </select>
+            </div>
+        </section>
+        <section>
+            <h2>Location</h2>
+
+            <div class="group">
+                <select name="location" ng-model="location">
+                    <option value="auto">Auto</option>
+                    <option value="custom">Custom</option>
+                </select>
+                <input ng-show="location == 'custom'" type="text" ng-model="settings.location.name" id="address" placeholder="Boulder, CO, 80305, USA"
+                       ng-model-options="{ updateOn: 'blur' }"/>
+            </div>
+        </section>
+    </form>
+</div>
+</script>
+<script type="text/ng-template" id="/app/views/support.html">
+<div class="support">
+    <section>
+        <a class="normal" href="http://rainfalldesign.quora.com/"><i class="fa fa-newspaper-o"></i> Updates On Our Blog</a>
+    </section>
+    <section>
+        <a class="normal" href="http://chromecurrently.uservoice.com/forums/170424-general" target="_blank"
+           id="support"><i class="fa fa-lightbulb-o"></i> Give Feedback</a>
+    </section>
+    <section>
+        <a class="normal" href="http://chromecurrently.uservoice.com" target="_blank" id="support"><i
+                class="fa fa-bug"></i> Report A Bug</a>
+    </section>
+
+    <div id="debug" ng-controller="DebugController">
+        <section>
+            <a href="#" class="clear" ng-click="clearSettings()"><i class="fa fa-bomb"></i>Clear Settings</a>
+            <span>This should be used with caution, it will clear all your currently settings.</span>
+        </section>
+        <section>
+            <span>Current Version: {{ version }}</span>
+        </section>
+    </div>
+</div>
+</script>
+<script type="text/ng-template" id="/app/views/theme_detail.html">
+<div class="theme-settings" ng-show="theme">
+    <section>
+        <h2>{{ theme.name }}</h2>
+
+        <p>{{ theme.description }}</p>
+    </section>
+    <ng-include src="getThemeTemplate()"></ng-include>
+    <div class="action-bar">
+        <a href="#"
+           analytics-on
+           analytics-event="save"
+           analytics-category="themes"
+           analytics-label="{{ theme.slug }}"
+           class="button"
+           ng-click="save()"
+           ng-show="theme.owned"
+                >Save</a>
+        <a href="#"
+           analytics-on
+           analytics-event="buy"
+           analytics-category="themes"
+           analytics-label="{{ theme.slug }}"
+           class="button"
+           ng-click="buy()"
+           ng-hide="theme.owned"
+                ><i ng-show="buying" class="fa fa-spinner fa-spin"></i><span ng-hide="buying" class="buy">Buy | <span>{{ theme.store.prices[0].valueMicros|webStoreCurrency:theme.store.prices[0].currencyCode}}</span></span></a>
+    </div>
+    <p class="something-wrong" ng-show="closedBuying" >
+      Can't add a credit card? Try going directly to <a href="https://wallet.google.com/manage/#paymentMethods:" target="_blank">Google Wallet</a>.
+    </p>
+</div>
+
+</script>
+<script type="text/ng-template" id="/app/views/themes.html">
+<div ng-show="themes" id="themes-container">
+    <ul class="themes-list">
+        <li ng-repeat="theme in themes" ng-show="!!theme.visibility">
+            <a class="item" ui-sref-active="active" ui-sref="drawer.themes.detail({slug:theme.slug})">
+                <div class="preview">
+                    <ng-include src="getThemeIconTemplate(theme)">
+                </div>
+                <p class="label">
+                    {{ theme.name }}
+                    <span ng-show="!theme.owned" class="owned-theme" title="For Sale" tipsy fade="true" offset="5" delay-in="100" gravity="s"><i class="fa fa-usd"></i></span>
+                    <span ng-show="theme.isActive" class="active-theme" tipsy fade="true" offset="5" delay-in="100" gravity="s" title="Active Theme" ><i class="fa fa-check"></i></span>
+                </p>
+
+                <p class="desc">{{ theme.description }}</p>
+            </a>
+        </li>
+        <div class="please-login" ng-show="!storeIsOpen">
+            Oops! Something is wrong with the Chrome Webstore. We are looking into this! In the meantime, double check that you are logged in <a ng-click="openChromeSettings()">Chrome Settings</a>.
+        </div>
+    </ul>
+
+    <div class="theme_detail" ui-view></div>
+</div>
+
+<div ng-hide="themes">
+    <div id="loader" class="status">Y</div>
+</div>
+
+
+
+</script>
+<script type="text/ng-template" id="/app/views/weather.html">
+<div ng-controller="WeatherController" >
+    <div id="weather" hotkey="{t: toggleTemperatureUnit}">
+        <div id="loader" class="status" ng-hide="weather">Y</div>
+        <div id="weather-inner" class="clearfix" ng-show="weather">
+            <div class="now smooth">
+                <span class='weather'>{{ weather.current.icon_url | conditionCode}}</span>
+                <b class="temp">{{ weather.current.tempConverted }}</b>
+                <p class="label">Now</p>
+                <p class="condition">{{weather.current.condition}}</p>
+            </div>
+            <ul class='clearfix'>
+                <li class="weather-container" ng-repeat="day in weather.forecast">
+                    <span class='weather smooth'>{{ day.icon_url|conditionCode }}</span>
+
+                    <div class="temp">
+                        <div class="w-left">
+                            <p class="high">{{ day.highConverted}}</p>
+                        </div>
+                        <div class="w-mid"></div>
+                        <div class="w-right">
+                            <p class="low">{{ day.lowConverted}}</p>
+                        </div>
+                    </div>
+                    <p class="day">{{ day.day }}</p>
+                    <p class="condition">{{day.condition}}</p>
+                </li>
+            </ul>
+        </div>
+        <div id="city" class="title">{{ weather.city }}</div>
+    </div>
+
+</div>
+
+</script>
+<script type="text/ng-template" id="/app/views/weather_underground.html">
+<div class="full-forecast">
+    <a title="Wunderground"
+       class="wunder"
+       href="{{ url }}"
+       analytics-on="click"
+       analytics-event="button"
+       analytics-category="click"
+       analytics-label="weather-underground">
+        <svg  version="1.1" id="Layer_1" fill="#fff" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35px" height="24px" viewBox="0 0 258.333 201.506" enable-background="new 0 0 258.333 201.506" xml:space="preserve">
+    <g>
+    <path d="M188.108,51.595c5.396,13.024,24.438,13.026,29.831,0l0.293-0.71c1.319-3.656,1.35-7.79-0.254-11.663L203.025,3.12
+    l-14.954,36.104c-1.607,3.878-1.576,8.017-0.25,11.676L188.108,51.595z" />
+    <path d="M156.126,90.397l-5.157,12.293l-7.549,17.994l-14.178,34.227c-5.076,14.063-25.592,14.079-30.682,0.017l-15.863-38.297
+    l-16.085,38.832c-5.351,13.321-24.883,13.329-30.258,0.013L5.212,80.289C1.81,72.078,5.827,62.381,14.038,58.98
+    c8.211-3.401,17.909,0.614,21.31,8.827l16.134,38.953l16.134-38.951c5.444-13.147,24.72-13.15,30.164-0.001l16.12,38.915
+    l9.167-22.132l0.537-1.295c2.713-5.831,8.608-9.882,15.463-9.882C148.463,73.412,156.083,81.009,156.126,90.397z M221.37,149.761
+    c-18.021,0-32.63-14.608-32.63-32.629c0-0.294,0.015-0.585,0.022-0.877V90.47c0-14.629-10.102-27.833-24.242-31.623
+    c-15.342-4.111-31.826,3.745-38.338,18.219l-0.658,1.588l-1.921,4.64c2.713-5.831,8.607-9.882,15.463-9.882
+    c9.397,0,17.017,7.597,17.06,16.985l0.019-0.044l0.002,26.382c0,25.638,20.599,47.491,46.234,48.893
+    c25.466,1.392,48.318-17.785,51.284-43.1c0.131-1.118,0.212-2.24,0.266-3.363C252.88,136.237,238.708,149.761,221.37,149.761z
+    M237.708,57.735c-0.012,0-0.022,0-0.035,0c-8.997,0.01-16.291,7.307-16.291,16.311v10.457v32.27
+    c0,8.888-7.422,16.309-16.31,16.309c-8.889,0-16.31-7.421-16.31-16.309v-0.519c-0.008,0.292-0.022,0.583-0.022,0.877
+    c0,18.021,14.608,32.629,32.63,32.629c17.338,0,31.51-13.524,32.561-30.597c0.035-0.741,0.062-1.482,0.064-2.225
+    c0-0.056,0.005-0.111,0.005-0.167V74.044C254,65.044,246.705,57.747,237.708,57.735z"/>
+    </g>
+    </svg>
+        <span class="forecast-label">See Forecast</span>
+    </a>
+</div>
+</script>
+<script type="text/ng-template" id="/app/components/clock/analog.html">
+<svg id="clock" viewBox="0 0 100 100" width="200" height="200">
+
+    <circle id="face" cx="50" cy="50" r="45"/>
+    <!-- the clock face -->
+
+    <g id="ticks">
+        <!-- 12 hour tick marks -->
+        <line x1='50' y1='5.000' x2='50.00' y2='10.00'/>
+        <line x1='72.50' y1='11.03' x2='70.00' y2='15.36'/>
+        <line x1='88.97' y1='27.50' x2='84.64' y2='30.00'/>
+        <line x1='95.00' y1='50.00' x2='90.00' y2='50.00'/>
+        <line x1='88.97' y1='72.50' x2='84.64' y2='70.00'/>
+        <line x1='72.50' y1='88.97' x2='70.00' y2='84.64'/>
+        <line x1='50.00' y1='95.00' x2='50.00' y2='90.00'/>
+        <line x1='27.50' y1='88.97' x2='30.00' y2='84.64'/>
+        <line x1='11.03' y1='72.50' x2='15.36' y2='70.00'/>
+        <line x1='5.000' y1='50.00' x2='10.00' y2='50.00'/>
+        <line x1='11.03' y1='27.50' x2='15.36' y2='30.00'/>
+        <line x1='27.50' y1='11.03' x2='30.00' y2='15.36'/>
+    </g>
+
+    <g id="numbers">
+        <!-- Number the cardinal directions-->
+        <text x="50" y="18">12</text>
+        <text x="85" y="53">3</text>
+        <text x="50" y="88">6</text>
+        <text x="15" y="53">9</text>
+    </g>
+
+    <!-- Draw hands pointing straight up. We rotate them in the code. -->
+    <g id="hands"> <!-- Add shadows to the hands -->
+        <line id="hourhand" x1="50" y1="50" x2="50" y2="24" ng-attr-transform="rotate({{ hourAngle }},50,50)"/>
+
+        <line id="minutehand" x1="50" y1="50" x2="50" y2="20" ng-attr-transform="rotate({{ minuteAngle }},50,50)"/>
+        <line id="secondhand" x1="50" y1="50" x2="50" y2="16" ng-attr-transform="rotate({{ secondAngle }},50,50)"/>
+    </g>
+</svg>
+</script>
+<script type="text/ng-template" id="/app/components/clock/digital.html">
+<div id="time" class="smooth">
+    <span class="hour">{{ time.hour|zeroPad }}</span>
+    <span class="minute">{{ time.minute|zeroPad }}</span>
+    <span class="second" ng-show="settings.secondsEnabled">{{ time.second|zeroPad }}</span>
+</div>
+</script>
+<script type="text/ng-template" id="/app/components/color-selector/index.html">
+    <div class="color"
+         ng-repeat="color in theme.colors"
+         style="background-color: {{color.dark}}"
+         ng-class="{active:colorIndex == $index}"
+         ng-click="select($index)">
+        <i class="fa fa-check"></i>
+    </div>
+</script>
+<script type="text/ng-template" id="/app/components/notification/index.html">
+<div id="update" ng-show="message">
+    <i class="fa fa-comment"></i>
+    <a href="{{ message.href }}">
+        <p ng-bind-html="message.html"></p>
+    </a>
+    <!-- <i class="icon-ok" ng-click="hide(message)"></i> -->
+</div>
+</script>
+<script type="text/ng-template" id="/app/themes/currently2/icon.html">
+<div class="color" style="background-color: {{ color.dark; }}" ng-repeat="color in theme.colors"></div>
+</script>
+<script type="text/ng-template" id="/app/themes/currently2/index.html">
+<div ng-controller="Currently2ThemeController">
+    <section>
+        <h2>Text Color</h2>
+
+        <div class="group">
+            <input name="textColor" type="radio" value="light" id="light" ng-model="theme.textColor"/>
+            <label for="light">Light</label>
+        </div>
+        <div class="group">
+            <input name="textColor" type="radio" value="dark" id="dark" ng-model="theme.textColor"/>
+            <label for="dark">Dark</label>
+        </div>
+    </section>
+    <section>
+        <h2>Background Color</h2>
+
+        <div class="color-selector" color-selector theme="$parent.theme" color-index="theme.colorIndex"></div>
+    </section>
+</div>
+</script>
+<script type="text/ng-template" id="/app/themes/classic/icon.html">
+<div class="color" style="background-color: {{ color.dark; }}" ng-repeat="color in theme.colors"></div>
+</script>
+<script type="text/ng-template" id="/app/themes/classic/index.html">
+<div ng-controller="ClassicThemeController">
+    <section>
+        <h2>Text Color</h2>
+
+        <div class="group">
+            <input name="textColor" type="radio" value="light" id="light" ng-model="theme.textColor"/>
+            <label for="light">Light</label>
+        </div>
+        <div class="group">
+            <input name="textColor" type="radio" value="dark" id="dark" ng-model="theme.textColor"/>
+            <label for="dark">Dark</label>
+        </div>
+    </section>
+    <section>
+        <h2>Background Color</h2>
+        <div class="color-selector" color-selector theme="$parent.theme" color-index="theme.colorIndex"></div>
+    </section>
+</div>
+</script>
+<script type="text/ng-template" id="/app/themes/dynamic/icon.html">
+<div class="dyanmic-preview"></div>
+</script>
+<script type="text/ng-template" id="/app/themes/dynamic/index.html">
+<div ng-controller="DynamicThemeController">
+</div>
+</script>
+<script type="text/ng-template" id="/app/themes/picker/icon.html">
+<div class="adventure"></div>
+</script>
+<script type="text/ng-template" id="/app/themes/picker/index.html">
+<div ng-controller="PickerThemeController">
+    <section>
+        <h2>Text Color</h2>
+
+        <div class="group">
+            <input name="textColor" type="radio" value="light" id="light" ng-model="theme.textColor"/>
+            <label for="light">Light</label>
+        </div>
+        <div class="group">
+            <input name="textColor" type="radio" value="dark" id="dark" ng-model="theme.textColor"/>
+            <label for="dark">Dark</label>
+        </div>
+    </section>
+    <section>
+        <h2>Background Color</h2>
+        <ng-farbtastic ng-model="theme.bgColor">
+        </ng-farbtastic>
+    </section>
+</div>
+</script>
+<script type="text/ng-template" id="/app/themes/weather/icon.html">
+<div class="weather-preview">
+	<div class="one"></div>
+	<div class="two"></div>
+	<div class="three"></div>
+</div>
+</script>
+<script type="text/ng-template" id="/app/themes/weather/index.html">
+<div ng-controller="WeatherThemeController">
+</div>
+</script>
+<script type="text/ng-template" id="/app/themes/sky/icon.html">
+<div class="stars">
+    <div class="star"></div>
+</div>
+</script>
+<script type="text/ng-template" id="/app/themes/sky/index.html">
+<div ng-controller="SkyThemeController">
+
+</div>
+</script>
+<script type="text/ng-template" id="/app/components/errors/default/default.html">
+<div>
+    Oops.. Something went wrong. <a href="mailto:{{ ctrl.errorEmail }}?subject={{ ctrl.errorSubject}}&body={{ ctrl.errorBody|encodeURIComponent}}">Click here to let us know about it.</a>
+</div>
+</script>
+<script type="text/ng-template" id="/app/components/errors/missing-locations/missing_location.html">
+<div id="error">
+    <p>Sorry! We can't find you. Would you like us to <a href="#" ng-click="ctrl.refresh()">try again</a>, or you can tell us where you are:</p>
+
+    <form id="set-location" ng-submit="ctrl.save()">
+        <input type="text" placeholder="Boulder, Colorado, 80305, USA" ng-model="ctrl.location"/>
+        <button>SAVE</button>
+    </form>
+</div>
+
+</script>
+<script type="text/ng-template" id="/app/components/errors/offline/offline.html">
+<div id="error">
+    <i class="icon-warning-sign"></i><span>Offline</span>
+</div>
+
+</script>
+
+<!-- End Templates -->
+
+
+<div id="welcome" ng-show="ctrl.welcome" ng-controller="WelcomeController as ctrl">
+    <div id="modal">
+        <div class="sun"></div>
+        <a href="#" class="button" ng-click="ctrl.hide()">Okay, got it!</a>
+    </div>
+</div>
+<div id="main" currently-theme="">
+    <a ui-sref="drawer.themes"><i class="fa fa-bars open-settings"></i></a>
+
+
+    <div id="main-content" class="container" ui-view=""></div>
+    <current-notifications></current-notifications>
+    <weather-underground-link></weather-underground-link>
+</div>
+<script src="/app/ga.js" type="application/javascript"></script>
+</body>
+</html>

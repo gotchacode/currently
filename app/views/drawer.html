@@ -1,0 +1,51 @@
+<!-- FIXME: Remove ng-click and use a route.-->
+<div class="settings2">
+    <i class="fa fa-close close-settings" ng-click="closeOptions()" hotkey="{esc:closeOptions}"></i>
+    <ul class="view-switch">
+        <div id="logo"></div>
+        <li id="show-themes">
+            <a ui-sref="drawer.themes" ui-sref-active="active">
+                <i class="fa fa-paint-brush"></i> Themes
+            </a>
+        </li>
+        <li id="show-options">
+            <a ui-sref="drawer.settings" ui-sref-active="active">
+                <i class="fa fa-gear"></i>
+                Options
+            </a>
+        </li>
+        <li id="show-credits">
+            <a ui-sref="drawer.credits" ui-sref-active="active">
+                <i class="fa fa-heart"></i>
+                Credits
+            </a>
+        </li>
+        <li id="show-support">
+            <a ui-sref="drawer.support" ui-sref-active="active">
+                <i class="fa fa-medkit"></i>
+                Support
+            </a>
+        </li>
+        <div class="sharing">
+            <li>
+                <a href="https://twitter.com/share?text=Currently+2+is+beautiful!+http%3A%2F%2Fbit.ly%2FPMawVf+%23currently+%23chrome+by+%40vitaly_babiy+and+%40henrymodis"
+                   target="_blank" id="share"><i class="fa fa-twitter"></i>Share</a>
+            </li>
+
+            <li>
+                <a target="_blank"
+                   href="http://www.facebook.com/sharer/sharer.php?u=https://chrome.google.com/webstore/detail/currently/ojhmphdkpgbibohbnpbfiefkgieacjmh?hl=en"><i
+                        class="fa fa-facebook-square"></i>Share</a>
+            </li>
+        </div>
+    </ul>
+
+    <!-- Bottom Pane-->
+    <div class="themes" ui-view></div>
+</div>
+
+<div id="demo" currently-demo>
+    <div class="demo-icon weather-icon" ng-show="theme.symbol.icon">v</div>
+    <digital-clock ng-show="theme.symbol.clock" demo="true"></digital-clock>
+    <div class="demo-temp" ng-show="theme.symbol.weather">{{ data.weather.temp }}&#176;</div>
+</div>

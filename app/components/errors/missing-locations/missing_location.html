@@ -1,0 +1,8 @@
+<div id="error">
+    <p>Sorry! We can't find you. Would you like us to <a href="#" ng-click="ctrl.refresh()">try again</a>, or you can tell us where you are:</p>
+
+    <form id="set-location" ng-submit="ctrl.save()">
+        <input type="text" placeholder="Boulder, Colorado, 80305, USA" ng-model="ctrl.location"/>
+        <button>SAVE</button>
+    </form>
+</div>

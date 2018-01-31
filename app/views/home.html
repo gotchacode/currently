@@ -1,0 +1,15 @@
+<div id="time-weather">
+	<analog-clock></analog-clock>
+	<digital-clock></digital-clock>
+
+	<p id="date" class="title"> {{ currentDate|date:'EEEE, MMMM d' }}</p>
+
+	<ng-include src="'/app/views/weather.html'" ng-hide="ctrl.errors.hasError"></ng-include>
+</div>
+<div class="error" ng-show="ctrl.errors.hasError" ng-switch="ctrl.errors.errorType">
+    <offline-error ng-switch-when="offline"></offline-error>
+    <missing-location-error ng-switch-when="location"></missing-location-error>
+    <default-error ng-switch-default></default-error>
+</div>
+
+

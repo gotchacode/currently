@@ -1,0 +1,18 @@
+<div ng-controller="ClassicThemeController">
+    <section>
+        <h2>Text Color</h2>
+
+        <div class="group">
+            <input name="textColor" type="radio" value="light" id="light" ng-model="theme.textColor"/>
+            <label for="light">Light</label>
+        </div>
+        <div class="group">
+            <input name="textColor" type="radio" value="dark" id="dark" ng-model="theme.textColor"/>
+            <label for="dark">Dark</label>
+        </div>
+    </section>
+    <section>
+        <h2>Background Color</h2>
+        <div class="color-selector" color-selector theme="$parent.theme" color-index="theme.colorIndex"></div>
+    </section>
+</div>

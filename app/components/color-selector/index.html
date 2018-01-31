@@ -1,0 +1,7 @@
+    <div class="color"
+         ng-repeat="color in theme.colors"
+         style="background-color: {{color.dark}}"
+         ng-class="{active:colorIndex == $index}"
+         ng-click="select($index)">
+        <i class="fa fa-check"></i>
+    </div>
